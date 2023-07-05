@@ -38,6 +38,8 @@ Trata-se de uma aplicação web que usa a biblioteca Bootstrap para construção
 - Como usuário, quero poder memorizar vocabulário importante​
 - Como usuário, quero poder praticar minha gramática
 
+![Screenshot](usecase.png)
+
 ## Requerimentos
 - Python 3
 - click
