@@ -40,6 +40,8 @@ Trata-se de uma aplicação web que usa a biblioteca Bootstrap para construção
 
 ![Screenshot](usecase.png)
 
+![Screenshot](database.png)
+
 ## Requerimentos
 - Python 3
 - click
