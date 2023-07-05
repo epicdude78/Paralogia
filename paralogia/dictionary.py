@@ -89,7 +89,7 @@ def get_example_sentences(search):
                 SENTENCE = 3
                 TRANSLATION = 1
                 results_ready_to_go[line[SENTENCE].rstrip()] = line[TRANSLATION]
-            except BaseException as e:
+            except IndexError as e:
                 pass
 
         return results_ready_to_go
