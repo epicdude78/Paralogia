@@ -64,7 +64,7 @@ Trata-se de uma aplicação web que usa a biblioteca Bootstrap para construção
 3. Instale os pacotes com `pip install -r requirements.txt`
 
 ## Executando
-1. Antes de usar o app pela primeira vez será preciso inicializar seu banco de dados por meio do seguinte comando: `flask init-db`. Seu banco se encontrará na pasta `instances` .
+1. Antes de usar o app pela primeira vez será preciso inicializar seu banco de dados por meio do seguinte comando: `flask --app paralogia init-db`. Seu banco se encontrará na pasta `instances` .
 2. Com o banco de dados pronto e uma vez entrado no seu ambiente virtual, basta executar o projeto em si: `flask --app paralogia run --debug`
 
 ## Contribuindo
