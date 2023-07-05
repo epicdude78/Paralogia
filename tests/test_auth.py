@@ -6,11 +6,13 @@ from paralogia.db import get_db
 
 
 def test_register(client, app):
+
+    REGISTER_PAGE_PATH = "/auth/register"
     # test that viewing the page renders without template errors
-    assert client.get("/auth/register").status_code == 200
+    assert client.get(REGISTER_PAGE_PATH).status_code == 200
 
     # test that successful registration redirects to the login page
-    response = client.post("/auth/register", data={"username": "a", "password": "a"})
+    response = client.post(REGISTER_PAGE_PATH, data={"username": "a", "password": "a"})
     assert response.headers["Location"] == "/auth/login"
 
     # test that the user was inserted into the database
