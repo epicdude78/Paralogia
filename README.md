@@ -38,7 +38,11 @@ Trata-se de uma aplicação web que usa a biblioteca Bootstrap para construção
 - Como usuário, quero poder memorizar vocabulário importante​
 - Como usuário, quero poder praticar minha gramática
 
+## Diagrama de casos de uso
+
 ![Screenshot](usecase.png)
+
+## Modelo do banco de dados
 
 ![Screenshot](database.png)
 
