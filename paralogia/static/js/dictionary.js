@@ -7,7 +7,7 @@ async function dictionarySearch(search, destinyDiv) {
         .then(response => response.json())
         .then(json => {
 
-            document.getElementById(destinyDiv).innerHTML += '<div id="spinner" class="spinner-border mt-5" rule="status" style="display:none"></div>';
+            document.getElementById(destinyDiv).innerHTML += '<div id="spinner" class="spinner-border mt-5" rule="status"></div>';
 
 
             console.log(json['en_ja_results'])
