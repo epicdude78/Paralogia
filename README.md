@@ -6,13 +6,11 @@ Este projeto visa o desenvolvimento de um ambiente integrado
 de aprendizado linguístico, fornecendo ao usuário tudo o que 
 precisa para aprofundar-se no seu idioma de escolha.
 
-![](Downloads/dashboard.png)
+![Screenshot](dashboard.png)
 
 ## Descrição da Arquitetura
 
 Trata-se de uma aplicação web que usa a biblioteca Bootstrap para construção de sua interface, assim como Flask e MySQL para o gerenciamento do backend. 
-
-
 
 ## Features
 - Dashboard
