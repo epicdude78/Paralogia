@@ -13,7 +13,7 @@ async function dictionarySearch(search, destinyDiv) {
             console.log(json['en_ja_results'])
             console.log(json['ja_en_results'])
 
-            if (!json['en_ja_results'] && !json['ja_en_results']){
+            if (!json['en_ja_results'] && !json['ja_en_results']) {
                 document.getElementById(destinyDiv).innerHTML += '<div style="margin-top: 20px">No results.</div>';
             }
 
@@ -53,8 +53,15 @@ async function dictionarySearch(search, destinyDiv) {
                 dictionarySearchResults.appendChild(wordSpan);
             }
 
+
+            const examplesLimit = 2000;
+            let totalExamplesShown = 0;
             if (!containsAllAscii(search) && Object.keys(json['ja_en_results']).length > 0) {
-                const amountOfExamplesFound = Object.keys(json['exampleSentences']).length;
+                
+                let amountOfExamplesFound = Object.keys(json['exampleSentences']).length;
+                if (amountOfExamplesFound > examplesLimit) {
+                    amountOfExamplesFound = examplesLimit;
+                }
                 const examplesHeader = document.createElement('h3');
                 const examplesHeaderText = document.createTextNode('例文 (' + amountOfExamplesFound + ' 件)');
                 examplesHeader.appendChild(examplesHeaderText);
@@ -66,6 +73,9 @@ async function dictionarySearch(search, destinyDiv) {
                 dictionarySearchResults.appendChild(line);
 
                 for (let key in json['exampleSentences']) {
+                    if (totalExamplesShown == examplesLimit) {
+                        break;
+                    }
 
                     const wordSpan = document.createElement('div');
                     wordSpan.setAttribute('style', 'margin-top:20px');
@@ -80,6 +90,7 @@ async function dictionarySearch(search, destinyDiv) {
                     wordSpan.appendChild(translation);
 
                     dictionarySearchResults.appendChild(wordSpan);
+                    totalExamplesShown++;
                 }
             }
             document.getElementById('spinner').remove();
