@@ -1,0 +1,6755 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        * {
+            font-family: Nunito, sans-serif;
+        }
+
+        #kanjiTrainingArea {
+            display: flex;
+            justify-content: center; 
+            gap: 10px;
+            flex-flow: wrap;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus,
+        button:focus {
+            outline: none;
+        }
+
+        .noSelect {
+            user-select: none;
+        }
+
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-60%);
+        }
+
+        select {
+            border: 1px solid black;
+        }
+
+        #startButtonWrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(420%);
+        }
+
+        #againButton,
+        #resultButton,
+        #startButton {
+            padding: 15px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: rgb(235, 235, 235);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 9px #999;
+        }
+
+        #resultButton:active,
+        #startButton:active,
+        #againButton:active {
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+        #exit {
+            cursor: pointer;
+            display: inline-block;
+            margin-left: 40px;
+            margin-top: 20px;
+        }
+
+        #test {
+            margin-left: 75px;
+            margin-right: 75px;
+            padding: 50px;
+        }
+
+        #resultButtonWrapper {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        #testTitle {
+            margin-bottom: 25px;
+            text-align: center;
+            word-break: keep-all;
+        }
+
+        .input {
+            width: 60px;
+        }
+
+        #testResults {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        #resultsTableWrapper {
+            display:grid;
+            justify-content:center;
+            margin-top: 25px;
+            margin-bottom: 25px;
+        }
+
+        td,
+        th {
+            border: 1px solid black;
+            text-align: center;
+        }
+    </style>
+    <script>
+        const kanjiDict =
+        {
+            "一": {
+                "readings": ["ichi", "itsu",],
+            },
+            "人": {
+                "readings": ["jin", "nin",],
+            },
+            "出": {
+                "readings": ["shutsu", "sui",],
+            },
+            "見": {
+                "readings": ["ken",],
+            },
+            "日": {
+                "readings": ["nichi", "jitsu",],
+            },
+            "大": {
+                "readings": ["dai", "tai",],
+            },
+            "思": {
+                "readings": ["shi",],
+            },
+            "中": {
+                "readings": ["chuu",],
+            },
+            "上": {
+                "readings": ["jou", "shou", "shan",],
+            },
+            "時": {
+                "readings": ["ji",],
+            },
+            "間": {
+                "readings": ["kan", "ken",],
+            },
+            "二": {
+                "readings": ["ni", "ji",],
+            },
+            "生": {
+                "readings": ["sei", "shou",],
+            },
+            "分": {
+                "readings": ["bun", "fun", "bu",],
+            },
+            "方": {
+                "readings": ["hou",],
+            },
+            "年": {
+                "readings": ["nen",],
+            },
+            "自": {
+                "readings": ["ji", "shi",],
+            },
+            "今": {
+                "readings": ["kon", "kin",],
+            },
+            "何": {
+                "readings": ["ka",],
+            },
+            "行": {
+                "readings": ["kou", "gyou", "an",],
+            },
+            "心": {
+                "readings": ["shin",],
+            },
+            "本": {
+                "readings": ["hon",],
+            },
+            "手": {
+                "readings": ["shu", "zu",],
+            },
+            "子": {
+                "readings": ["shi", "su", "tsu",],
+            },
+            "事": {
+                "readings": ["ji", "zu",],
+            },
+            "三": {
+                "readings": ["san", "zou",],
+            },
+            "知": {
+                "readings": ["chi",],
+            },
+            "前": {
+                "readings": ["zen",],
+            },
+            "立": {
+                "readings": ["ritsu", "ryuu", "rittoru",],
+            },
+            "小": {
+                "readings": ["shou",],
+            },
+            "家": {
+                "readings": ["ka", "ke",],
+            },
+            "十": {
+                "readings": ["juu", "ji-", "ju-",],
+            },
+            "物": {
+                "readings": ["butsu", "motsu",],
+            },
+            "下": {
+                "readings": ["ka", "ge",],
+            },
+            "合": {
+                "readings": ["gou", "ga-", "ka-",],
+            },
+            "目": {
+                "readings": ["moku", "boku",],
+            },
+            "来": {
+                "readings": ["rai", "tai",],
+            },
+            "者": {
+                "readings": ["sha",],
+            },
+            "後": {
+                "readings": ["go", "kou",],
+            },
+            "度": {
+                "readings": ["do", "to", "taku",],
+            },
+            "明": {
+                "readings": ["mei", "myou", "min",],
+            },
+            "持": {
+                "readings": ["ji",],
+            },
+            "入": {
+                "readings": ["nyuu", "ju",],
+            },
+            "言": {
+                "readings": ["gen", "gon",],
+            },
+            "不": {
+                "readings": ["fu", "bu",],
+            },
+            "同": {
+                "readings": ["dou",],
+            },
+            "気": {
+                "readings": ["ki", "ke",],
+            },
+            "月": {
+                "readings": ["getsu", "gatsu",],
+            },
+            "通": {
+                "readings": ["tsuu", "tsu",],
+            },
+            "意": {
+                "readings": ["i",],
+            },
+            "無": {
+                "readings": ["mu", "bu",],
+            },
+            "面": {
+                "readings": ["men", "ben",],
+            },
+            "少": {
+                "readings": ["shou",],
+            },
+            "外": {
+                "readings": ["gai", "ge",],
+            },
+            "感": {
+                "readings": ["kan",],
+            },
+            "地": {
+                "readings": ["chi", "ji",],
+            },
+            "風": {
+                "readings": ["fuu", "fu",],
+            },
+            "近": {
+                "readings": ["kin", "kon",],
+            },
+            "白": {
+                "readings": ["haku", "byaku",],
+            },
+            "所": {
+                "readings": ["sho",],
+            },
+            "身": {
+                "readings": ["shin",],
+            },
+            "先": {
+                "readings": ["sen",],
+            },
+            "四": {
+                "readings": ["shi",],
+            },
+            "然": {
+                "readings": ["zen", "nen",],
+            },
+            "世": {
+                "readings": ["sei", "se", "sou",],
+            },
+            "場": {
+                "readings": ["jou", "chou",],
+            },
+            "考": {
+                "readings": ["kou",],
+            },
+            "向": {
+                "readings": ["kou",],
+            },
+            "五": {
+                "readings": ["go",],
+            },
+            "長": {
+                "readings": ["chou",],
+            },
+            "聞": {
+                "readings": ["bun", "mon",],
+            },
+            "味": {
+                "readings": ["mi",],
+            },
+            "話": {
+                "readings": ["wa",],
+            },
+            "多": {
+                "readings": ["ta",],
+            },
+            "私": {
+                "readings": ["shi",],
+            },
+            "口": {
+                "readings": ["kou", "ku",],
+            },
+            "新": {
+                "readings": ["shin",],
+            },
+            "切": {
+                "readings": ["setsu", "sai",],
+            },
+            "足": {
+                "readings": ["soku",],
+            },
+            "動": {
+                "readings": ["dou",],
+            },
+            "山": {
+                "readings": ["san", "sen",],
+            },
+            "代": {
+                "readings": ["dai", "tai",],
+            },
+            "道": {
+                "readings": ["dou", "tou",],
+            },
+            "色": {
+                "readings": ["shoku", "shiki",],
+            },
+            "高": {
+                "readings": ["kou",],
+            },
+            "力": {
+                "readings": ["ryoku", "riki", "rii",],
+            },
+            "書": {
+                "readings": ["sho",],
+            },
+            "理": {
+                "readings": ["ri",],
+            },
+            "女": {
+                "readings": ["jo", "nyo", "nyou",],
+            },
+            "名": {
+                "readings": ["mei", "myou",],
+            },
+            "頭": {
+                "readings": ["tou", "zu", "to",],
+            },
+            "相": {
+                "readings": ["sou", "shou",],
+            },
+            "取": {
+                "readings": ["shu",],
+            },
+            "内": {
+                "readings": ["nai", "dai",],
+            },
+            "作": {
+                "readings": ["saku", "sa",],
+            },
+            "葉": {
+                "readings": ["you",],
+            },
+            "全": {
+                "readings": ["zen",],
+            },
+            "実": {
+                "readings": ["jitsu", "shitsu",],
+            },
+            "的": {
+                "readings": ["teki",],
+            },
+            "以": {
+                "readings": ["i",],
+            },
+            "文": {
+                "readings": ["bun", "mon",],
+            },
+            "当": {
+                "readings": ["tou",],
+            },
+            "歩": {
+                "readings": ["ho", "bu", "fu",],
+            },
+            "最": {
+                "readings": ["sai", "shu",],
+            },
+            "用": {
+                "readings": ["you",],
+            },
+            "得": {
+                "readings": ["toku",],
+            },
+            "現": {
+                "readings": ["gen",],
+            },
+            "空": {
+                "readings": ["kuu",],
+            },
+            "落": {
+                "readings": ["raku",],
+            },
+            "別": {
+                "readings": ["betsu",],
+            },
+            "主": {
+                "readings": ["shu", "su", "syuu",],
+            },
+            "正": {
+                "readings": ["sei", "shou",],
+            },
+            "好": {
+                "readings": ["kou",],
+            },
+            "情": {
+                "readings": ["jou", "sei",],
+            },
+            "屋": {
+                "readings": ["oku",],
+            },
+            "直": {
+                "readings": ["choku", "jiki", "jika",],
+            },
+            "夜": {
+                "readings": ["ya",],
+            },
+            "部": {
+                "readings": ["bu",],
+            },
+            "平": {
+                "readings": ["hei", "byou", "hyou",],
+            },
+            "引": {
+                "readings": ["in",],
+            },
+            "仕": {
+                "readings": ["shi", "ji",],
+            },
+            "重": {
+                "readings": ["juu", "chou",],
+            },
+            "体": {
+                "readings": ["tai", "tei",],
+            },
+            "流": {
+                "readings": ["ryuu", "ru",],
+            },
+            "起": {
+                "readings": ["ki",],
+            },
+            "次": {
+                "readings": ["ji", "shi",],
+            },
+            "真": {
+                "readings": ["shin",],
+            },
+            "水": {
+                "readings": ["sui",],
+            },
+            "六": {
+                "readings": ["roku", "riku",],
+            },
+            "彼": {
+                "readings": ["hi",],
+            },
+            "木": {
+                "readings": ["boku", "moku",],
+            },
+            "過": {
+                "readings": ["ka",],
+            },
+            "天": {
+                "readings": ["ten",],
+            },
+            "遠": {
+                "readings": ["en", "on",],
+            },
+            "神": {
+                "readings": ["shin", "jin",],
+            },
+            "深": {
+                "readings": ["shin",],
+            },
+            "常": {
+                "readings": ["jou",],
+            },
+            "結": {
+                "readings": ["ketsu", "kechi",],
+            },
+            "野": {
+                "readings": ["ya", "sho",],
+            },
+            "若": {
+                "readings": ["jaku", "nyaku", "nya",],
+            },
+            "他": {
+                "readings": ["ta",],
+            },
+            "男": {
+                "readings": ["dan", "nan",],
+            },
+            "着": {
+                "readings": ["chaku", "jaku",],
+            },
+            "第": {
+                "readings": ["dai", "tei",],
+            },
+            "達": {
+                "readings": ["tatsu", "da",],
+            },
+            "田": {
+                "readings": ["den",],
+            },
+            "光": {
+                "readings": ["kou",],
+            },
+            "眼": {
+                "readings": ["gan", "gen",],
+            },
+            "想": {
+                "readings": ["sou", "so",],
+            },
+            "美": {
+                "readings": ["bi", "mi",],
+            },
+            "会": {
+                "readings": ["kai", "e",],
+            },
+            "置": {
+                "readings": ["chi",],
+            },
+            "有": {
+                "readings": ["yuu", "u",],
+            },
+            "問": {
+                "readings": ["mon",],
+            },
+            "早": {
+                "readings": ["sou", "sa-",],
+            },
+            "変": {
+                "readings": ["hen",],
+            },
+            "違": {
+                "readings": ["i",],
+            },
+            "様": {
+                "readings": ["you", "shou",],
+            },
+            "居": {
+                "readings": ["kyo", "ko",],
+            },
+            "金": {
+                "readings": ["kin", "kon", "gon",],
+            },
+            "強": {
+                "readings": ["kyou", "gou",],
+            },
+            "音": {
+                "readings": ["on", "in", "non",],
+            },
+            "笑": {
+                "readings": ["shou",],
+            },
+            "苦": {
+                "readings": ["ku",],
+            },
+            "八": {
+                "readings": ["hachi",],
+            },
+            "初": {
+                "readings": ["sho",],
+            },
+            "死": {
+                "readings": ["shi",],
+            },
+            "原": {
+                "readings": ["gen",],
+            },
+            "活": {
+                "readings": ["katsu",],
+            },
+            "命": {
+                "readings": ["mei", "myou",],
+            },
+            "頃": {
+                "readings": ["kei", "kyou",],
+            },
+            "朝": {
+                "readings": ["chou",],
+            },
+            "形": {
+                "readings": ["kei", "gyou",],
+            },
+            "親": {
+                "readings": ["shin",],
+            },
+            "顔": {
+                "readings": ["gan",],
+            },
+            "安": {
+                "readings": ["an",],
+            },
+            "古": {
+                "readings": ["ko",],
+            },
+            "百": {
+                "readings": ["hyaku", "byaku",],
+            },
+            "学": {
+                "readings": ["gaku",],
+            },
+            "対": {
+                "readings": ["tai", "tsui",],
+            },
+            "信": {
+                "readings": ["shin",],
+            },
+            "解": {
+                "readings": ["kai", "ge",],
+            },
+            "決": {
+                "readings": ["ketsu",],
+            },
+            "半": {
+                "readings": ["han",],
+            },
+            "表": {
+                "readings": ["hyou",],
+            },
+            "成": {
+                "readings": ["sei", "jou",],
+            },
+            "声": {
+                "readings": ["sei", "shou",],
+            },
+            "返": {
+                "readings": ["hen",],
+            },
+            "誰": {
+                "readings": ["sui",],
+            },
+            "発": {
+                "readings": ["hatsu", "hotsu",],
+            },
+            "青": {
+                "readings": ["sei", "shou",],
+            },
+            "夫": {
+                "readings": ["fu", "fuu", "bu",],
+            },
+            "語": {
+                "readings": ["go",],
+            },
+            "張": {
+                "readings": ["chou",],
+            },
+            "帰": {
+                "readings": ["ki",],
+            },
+            "等": {
+                "readings": ["tou",],
+            },
+            "開": {
+                "readings": ["kai",],
+            },
+            "七": {
+                "readings": ["shichi",],
+            },
+            "根": {
+                "readings": ["kon",],
+            },
+            "待": {
+                "readings": ["tai",],
+            },
+            "込": {
+                "readings": ["komu", "komu", "komi", "komi", "komeru",],
+            },
+            "九": {
+                "readings": ["kyuu", "ku",],
+            },
+            "国": {
+                "readings": ["koku",],
+            },
+            "悪": {
+                "readings": ["aku", "o",],
+            },
+            "説": {
+                "readings": ["setsu", "zei",],
+            },
+            "愛": {
+                "readings": ["ai",],
+            },
+            "性": {
+                "readings": ["sei", "shou",],
+            },
+            "御": {
+                "readings": ["gyo", "go",],
+            },
+            "姿": {
+                "readings": ["shi",],
+            },
+            "要": {
+                "readings": ["you",],
+            },
+            "始": {
+                "readings": ["shi",],
+            },
+            "食": {
+                "readings": ["shoku", "jiki",],
+            },
+            "呼": {
+                "readings": ["ko",],
+            },
+            "数": {
+                "readings": ["suu", "su", "saku", "soku", "shu",],
+            },
+            "在": {
+                "readings": ["zai",],
+            },
+            "飛": {
+                "readings": ["hi",],
+            },
+            "果": {
+                "readings": ["ka",],
+            },
+            "太": {
+                "readings": ["tai", "ta",],
+            },
+            "石": {
+                "readings": ["seki", "shaku", "koku",],
+            },
+            "必": {
+                "readings": ["hitsu",],
+            },
+            "調": {
+                "readings": ["chou",],
+            },
+            "打": {
+                "readings": ["da", "daasu",],
+            },
+            "土": {
+                "readings": ["do", "to",],
+            },
+            "受": {
+                "readings": ["ju",],
+            },
+            "急": {
+                "readings": ["kyuu",],
+            },
+            "種": {
+                "readings": ["shu",],
+            },
+            "定": {
+                "readings": ["tei", "jou",],
+            },
+            "可": {
+                "readings": ["ka", "koku",],
+            },
+            "議": {
+                "readings": ["gi",],
+            },
+            "草": {
+                "readings": ["sou",],
+            },
+            "細": {
+                "readings": ["sai",],
+            },
+            "失": {
+                "readings": ["shitsu",],
+            },
+            "化": {
+                "readings": ["ka", "ke",],
+            },
+            "法": {
+                "readings": ["hou", "ha-", "ho-", "furan",],
+            },
+            "川": {
+                "readings": ["sen",],
+            },
+            "元": {
+                "readings": ["gen", "gan",],
+            },
+            "残": {
+                "readings": ["zan", "san",],
+            },
+            "覚": {
+                "readings": ["kaku",],
+            },
+            "供": {
+                "readings": ["kyou", "ku", "kuu", "gu",],
+            },
+            "念": {
+                "readings": ["nen",],
+            },
+            "機": {
+                "readings": ["ki",],
+            },
+            "教": {
+                "readings": ["kyou",],
+            },
+            "東": {
+                "readings": ["tou",],
+            },
+            "恐": {
+                "readings": ["kyou",],
+            },
+            "運": {
+                "readings": ["un",],
+            },
+            "際": {
+                "readings": ["sai",],
+            },
+            "由": {
+                "readings": ["yu", "yuu", "yui",],
+            },
+            "集": {
+                "readings": ["syuu",],
+            },
+            "花": {
+                "readings": ["ka", "ke",],
+            },
+            "論": {
+                "readings": ["ron",],
+            },
+            "非": {
+                "readings": ["hi",],
+            },
+            "難": {
+                "readings": ["nan",],
+            },
+            "関": {
+                "readings": ["kan",],
+            },
+            "終": {
+                "readings": ["syuu",],
+            },
+            "記": {
+                "readings": ["ki",],
+            },
+            "利": {
+                "readings": ["ri",],
+            },
+            "止": {
+                "readings": ["shi",],
+            },
+            "去": {
+                "readings": ["kyo", "ko",],
+            },
+            "暗": {
+                "readings": ["an",],
+            },
+            "底": {
+                "readings": ["tei",],
+            },
+            "忘": {
+                "readings": ["bou",],
+            },
+            "連": {
+                "readings": ["ren",],
+            },
+            "反": {
+                "readings": ["han", "hon", "tan", "ho",],
+            },
+            "横": {
+                "readings": ["ou",],
+            },
+            "寄": {
+                "readings": ["ki",],
+            },
+            "進": {
+                "readings": ["shin",],
+            },
+            "馬": {
+                "readings": ["ba",],
+            },
+            "程": {
+                "readings": ["tei",],
+            },
+            "赤": {
+                "readings": ["seki", "shaku",],
+            },
+            "消": {
+                "readings": ["shou",],
+            },
+            "突": {
+                "readings": ["totsu", "ka",],
+            },
+            "望": {
+                "readings": ["bou", "mou",],
+            },
+            "戸": {
+                "readings": ["ko",],
+            },
+            "黒": {
+                "readings": ["koku",],
+            },
+            "指": {
+                "readings": ["shi",],
+            },
+            "我": {
+                "readings": ["ga",],
+            },
+            "和": {
+                "readings": ["wa", "o", "ka",],
+            },
+            "品": {
+                "readings": ["hin", "hon",],
+            },
+            "使": {
+                "readings": ["shi",],
+            },
+            "如": {
+                "readings": ["jo", "nyo",],
+            },
+            "経": {
+                "readings": ["kei", "kyou", "kin",],
+            },
+            "番": {
+                "readings": ["ban",],
+            },
+            "題": {
+                "readings": ["dai",],
+            },
+            "火": {
+                "readings": ["ka",],
+            },
+            "極": {
+                "readings": ["kyoku", "goku",],
+            },
+            "配": {
+                "readings": ["hai",],
+            },
+            "楽": {
+                "readings": ["gaku", "raku", "gou",],
+            },
+            "限": {
+                "readings": ["gen",],
+            },
+            "息": {
+                "readings": ["soku",],
+            },
+            "片": {
+                "readings": ["hen",],
+            },
+            "折": {
+                "readings": ["setsu", "shaku",],
+            },
+            "絶": {
+                "readings": ["zetsu",],
+            },
+            "例": {
+                "readings": ["rei",],
+            },
+            "町": {
+                "readings": ["chou",],
+            },
+            "紙": {
+                "readings": ["shi",],
+            },
+            "余": {
+                "readings": ["yo",],
+            },
+            "素": {
+                "readings": ["so", "su",],
+            },
+            "追": {
+                "readings": ["tsui",],
+            },
+            "加": {
+                "readings": ["ka",],
+            },
+            "界": {
+                "readings": ["kai",],
+            },
+            "容": {
+                "readings": ["you",],
+            },
+            "業": {
+                "readings": ["gyou", "gou",],
+            },
+            "幾": {
+                "readings": ["ki",],
+            },
+            "門": {
+                "readings": ["mon",],
+            },
+            "点": {
+                "readings": ["ten",],
+            },
+            "君": {
+                "readings": ["kun",],
+            },
+            "士": {
+                "readings": ["shi",],
+            },
+            "離": {
+                "readings": ["ri",],
+            },
+            "共": {
+                "readings": ["kyou",],
+            },
+            "存": {
+                "readings": ["son", "zon",],
+            },
+            "驚": {
+                "readings": ["kyou",],
+            },
+            "故": {
+                "readings": ["ko",],
+            },
+            "浮": {
+                "readings": ["fu",],
+            },
+            "振": {
+                "readings": ["shin",],
+            },
+            "影": {
+                "readings": ["ei",],
+            },
+            "悲": {
+                "readings": ["hi",],
+            },
+            "読": {
+                "readings": ["doku", "toku", "tou",],
+            },
+            "義": {
+                "readings": ["gi",],
+            },
+            "似": {
+                "readings": ["ji",],
+            },
+            "毎": {
+                "readings": ["mai",],
+            },
+            "放": {
+                "readings": ["hou",],
+            },
+            "処": {
+                "readings": ["sho",],
+            },
+            "角": {
+                "readings": ["kaku",],
+            },
+            "母": {
+                "readings": ["bo",],
+            },
+            "渡": {
+                "readings": ["to",],
+            },
+            "特": {
+                "readings": ["toku",],
+            },
+            "位": {
+                "readings": ["i",],
+            },
+            "質": {
+                "readings": ["shitsu", "shichi", "chi",],
+            },
+            "幸": {
+                "readings": ["kou",],
+            },
+            "車": {
+                "readings": ["sha",],
+            },
+            "暮": {
+                "readings": ["bo",],
+            },
+            "左": {
+                "readings": ["sa", "sha",],
+            },
+            "郎": {
+                "readings": ["rou", "ryou",],
+            },
+            "勢": {
+                "readings": ["sei", "zei",],
+            },
+            "段": {
+                "readings": ["dan", "tan",],
+            },
+            "背": {
+                "readings": ["hai",],
+            },
+            "西": {
+                "readings": ["sei", "sai", "su",],
+            },
+            "住": {
+                "readings": ["juu", "juu", "chuu",],
+            },
+            "海": {
+                "readings": ["kai",],
+            },
+            "両": {
+                "readings": ["ryou",],
+            },
+            "夢": {
+                "readings": ["mu", "bou",],
+            },
+            "病": {
+                "readings": ["byou", "hei",],
+            },
+            "昔": {
+                "readings": ["seki", "shaku",],
+            },
+            "耳": {
+                "readings": ["ji",],
+            },
+            "並": {
+                "readings": ["hei", "hou",],
+            },
+            "伝": {
+                "readings": ["den", "ten",],
+            },
+            "熱": {
+                "readings": ["netsu",],
+            },
+            "類": {
+                "readings": ["rui",],
+            },
+            "末": {
+                "readings": ["matsu", "batsu",],
+            },
+            "路": {
+                "readings": ["ro", "ru",],
+            },
+            "村": {
+                "readings": ["son",],
+            },
+            "胸": {
+                "readings": ["kyou",],
+            },
+            "困": {
+                "readings": ["kon",],
+            },
+            "勝": {
+                "readings": ["shou",],
+            },
+            "更": {
+                "readings": ["kou",],
+            },
+            "右": {
+                "readings": ["u", "yuu",],
+            },
+            "晩": {
+                "readings": ["ban",],
+            },
+            "交": {
+                "readings": ["kou",],
+            },
+            "端": {
+                "readings": ["tan",],
+            },
+            "越": {
+                "readings": ["etsu", "otsu",],
+            },
+            "散": {
+                "readings": ["san",],
+            },
+            "友": {
+                "readings": ["yuu",],
+            },
+            "遊": {
+                "readings": ["yuu", "yu",],
+            },
+            "態": {
+                "readings": ["tai",],
+            },
+            "公": {
+                "readings": ["kou", "ku",],
+            },
+            "送": {
+                "readings": ["sou",],
+            },
+            "精": {
+                "readings": ["sei", "shou",],
+            },
+            "座": {
+                "readings": ["za",],
+            },
+            "走": {
+                "readings": ["sou",],
+            },
+            "役": {
+                "readings": ["yaku", "eki",],
+            },
+            "妙": {
+                "readings": ["myou", "byou",],
+            },
+            "判": {
+                "readings": ["han", "ban",],
+            },
+            "治": {
+                "readings": ["ji", "chi",],
+            },
+            "薄": {
+                "readings": ["haku",],
+            },
+            "千": {
+                "readings": ["sen",],
+            },
+            "途": {
+                "readings": ["to",],
+            },
+            "注": {
+                "readings": ["chuu",],
+            },
+            "首": {
+                "readings": ["shu",],
+            },
+            "支": {
+                "readings": ["shi",],
+            },
+            "断": {
+                "readings": ["dan",],
+            },
+            "答": {
+                "readings": ["tou",],
+            },
+            "鳴": {
+                "readings": ["mei",],
+            },
+            "側": {
+                "readings": ["soku",],
+            },
+            "父": {
+                "readings": ["fu",],
+            },
+            "押": {
+                "readings": ["ou",],
+            },
+            "字": {
+                "readings": ["ji",],
+            },
+            "異": {
+                "readings": ["i",],
+            },
+            "老": {
+                "readings": ["rou",],
+            },
+            "格": {
+                "readings": ["kaku", "kou", "kyaku", "gou",],
+            },
+            "識": {
+                "readings": ["shiki",],
+            },
+            "社": {
+                "readings": ["sha",],
+            },
+            "夕": {
+                "readings": ["seki",],
+            },
+            "興": {
+                "readings": ["kou", "kyou",],
+            },
+            "服": {
+                "readings": ["fuku",],
+            },
+            "付": {
+                "readings": ["fu",],
+            },
+            "術": {
+                "readings": ["jutsu",],
+            },
+            "腹": {
+                "readings": ["fuku",],
+            },
+            "能": {
+                "readings": ["nou",],
+            },
+            "皆": {
+                "readings": ["kai",],
+            },
+            "談": {
+                "readings": ["dan",],
+            },
+            "具": {
+                "readings": ["gu",],
+            },
+            "喜": {
+                "readings": ["ki",],
+            },
+            "吹": {
+                "readings": ["sui",],
+            },
+            "広": {
+                "readings": ["kou",],
+            },
+            "降": {
+                "readings": ["kou", "go",],
+            },
+            "都": {
+                "readings": ["to", "tsu",],
+            },
+            "計": {
+                "readings": ["kei",],
+            },
+            "案": {
+                "readings": ["an",],
+            },
+            "確": {
+                "readings": ["kaku", "kou",],
+            },
+            "万": {
+                "readings": ["man", "ban",],
+            },
+            "頼": {
+                "readings": ["rai",],
+            },
+            "乗": {
+                "readings": ["jou", "shou",],
+            },
+            "続": {
+                "readings": ["zoku", "shoku", "kou", "kyou",],
+            },
+            "刻": {
+                "readings": ["koku",],
+            },
+            "雑": {
+                "readings": ["zatsu", "zou",],
+            },
+            "京": {
+                "readings": ["kyou", "kei", "kin",],
+            },
+            "春": {
+                "readings": ["syun",],
+            },
+            "破": {
+                "readings": ["ha",],
+            },
+            "裏": {
+                "readings": ["ri",],
+            },
+            "庭": {
+                "readings": ["tei",],
+            },
+            "派": {
+                "readings": ["ha",],
+            },
+            "未": {
+                "readings": ["mi", "bi",],
+            },
+            "工": {
+                "readings": ["kou", "ku", "gu",],
+            },
+            "抱": {
+                "readings": ["hou",],
+            },
+            "満": {
+                "readings": ["man", "ban",],
+            },
+            "期": {
+                "readings": ["ki", "go",],
+            },
+            "殺": {
+                "readings": ["satsu", "sai", "setsu",],
+            },
+            "独": {
+                "readings": ["doku", "toku",],
+            },
+            "台": {
+                "readings": ["dai", "tai",],
+            },
+            "室": {
+                "readings": ["shitsu",],
+            },
+            "静": {
+                "readings": ["sei", "jou",],
+            },
+            "差": {
+                "readings": ["sa",],
+            },
+            "冷": {
+                "readings": ["rei",],
+            },
+            "許": {
+                "readings": ["kyo",],
+            },
+            "投": {
+                "readings": ["tou",],
+            },
+            "良": {
+                "readings": ["ryou",],
+            },
+            "景": {
+                "readings": ["kei",],
+            },
+            "掛": {
+                "readings": ["kai", "kei",],
+            },
+            "申": {
+                "readings": ["shin",],
+            },
+            "茶": {
+                "readings": ["cha", "sa",],
+            },
+            "構": {
+                "readings": ["kou",],
+            },
+            "客": {
+                "readings": ["kyaku", "kaku",],
+            },
+            "縁": {
+                "readings": ["en", "nen",],
+            },
+            "助": {
+                "readings": ["jo",],
+            },
+            "守": {
+                "readings": ["shu", "su",],
+            },
+            "微": {
+                "readings": ["bi",],
+            },
+            "買": {
+                "readings": ["bai",],
+            },
+            "負": {
+                "readings": ["fu",],
+            },
+            "状": {
+                "readings": ["jou",],
+            },
+            "弱": {
+                "readings": ["jaku",],
+            },
+            "係": {
+                "readings": ["kei",],
+            },
+            "痛": {
+                "readings": ["tsuu",],
+            },
+            "観": {
+                "readings": ["kan",],
+            },
+            "師": {
+                "readings": ["shi",],
+            },
+            "舞": {
+                "readings": ["bu",],
+            },
+            "造": {
+                "readings": ["zou",],
+            },
+            "線": {
+                "readings": ["sen",],
+            },
+            "与": {
+                "readings": ["yo",],
+            },
+            "肉": {
+                "readings": ["niku",],
+            },
+            "疑": {
+                "readings": ["gi",],
+            },
+            "腰": {
+                "readings": ["you",],
+            },
+            "組": {
+                "readings": ["so",],
+            },
+            "血": {
+                "readings": ["ketsu",],
+            },
+            "奥": {
+                "readings": ["ou",],
+            },
+            "像": {
+                "readings": ["zou",],
+            },
+            "雨": {
+                "readings": ["u",],
+            },
+            "単": {
+                "readings": ["tan",],
+            },
+            "曲": {
+                "readings": ["kyoku",],
+            },
+            "倒": {
+                "readings": ["tou",],
+            },
+            "骨": {
+                "readings": ["kotsu",],
+            },
+            "丁": {
+                "readings": ["chou", "tei", "chin", "tou", "chi",],
+            },
+            "快": {
+                "readings": ["kai",],
+            },
+            "酒": {
+                "readings": ["shu",],
+            },
+            "至": {
+                "readings": ["shi",],
+            },
+            "求": {
+                "readings": ["kyuu", "gu",],
+            },
+            "働": {
+                "readings": ["dou",],
+            },
+            "井": {
+                "readings": ["sei", "shou",],
+            },
+            "軽": {
+                "readings": ["kei", "kyou", "kin",],
+            },
+            "婦": {
+                "readings": ["fu",],
+            },
+            "逃": {
+                "readings": ["tou",],
+            },
+            "久": {
+                "readings": ["kyuu", "ku",],
+            },
+            "及": {
+                "readings": ["kyuu",],
+            },
+            "泣": {
+                "readings": ["kyuu",],
+            },
+            "寝": {
+                "readings": ["shin",],
+            },
+            "緒": {
+                "readings": ["sho", "cho",],
+            },
+            "従": {
+                "readings": ["juu", "shou", "ju",],
+            },
+            "応": {
+                "readings": ["ou", "you", "nou",],
+            },
+            "奇": {
+                "readings": ["ki",],
+            },
+            "料": {
+                "readings": ["ryou",],
+            },
+            "敷": {
+                "readings": ["fu",],
+            },
+            "又": {
+                "readings": ["yuu",],
+            },
+            "示": {
+                "readings": ["ji", "shi",],
+            },
+            "易": {
+                "readings": ["eki", "i",],
+            },
+            "盛": {
+                "readings": ["sei", "jou",],
+            },
+            "北": {
+                "readings": ["hoku",],
+            },
+            "象": {
+                "readings": ["shou", "zou",],
+            },
+            "再": {
+                "readings": ["sai", "sa",],
+            },
+            "秋": {
+                "readings": ["syuu",],
+            },
+            "歌": {
+                "readings": ["ka",],
+            },
+            "告": {
+                "readings": ["koku",],
+            },
+            "件": {
+                "readings": ["ken",],
+            },
+            "宿": {
+                "readings": ["shuku",],
+            },
+            "響": {
+                "readings": ["kyou",],
+            },
+            "戦": {
+                "readings": ["sen",],
+            },
+            "夏": {
+                "readings": ["ka", "ga", "ge",],
+            },
+            "眺": {
+                "readings": ["chou",],
+            },
+            "節": {
+                "readings": ["setsu", "sechi",],
+            },
+            "比": {
+                "readings": ["hi",],
+            },
+            "抜": {
+                "readings": ["batsu", "hatsu", "hai",],
+            },
+            "階": {
+                "readings": ["kai",],
+            },
+            "察": {
+                "readings": ["satsu",],
+            },
+            "仰": {
+                "readings": ["gyou", "kou",],
+            },
+            "毛": {
+                "readings": ["mou",],
+            },
+            "転": {
+                "readings": ["ten",],
+            },
+            "島": {
+                "readings": ["tou",],
+            },
+            "昨": {
+                "readings": ["saku",],
+            },
+            "式": {
+                "readings": ["shiki",],
+            },
+            "往": {
+                "readings": ["ou",],
+            },
+            "願": {
+                "readings": ["gan",],
+            },
+            "低": {
+                "readings": ["tei",],
+            },
+            "鳥": {
+                "readings": ["chou",],
+            },
+            "辺": {
+                "readings": ["hen",],
+            },
+            "産": {
+                "readings": ["san",],
+            },
+            "窓": {
+                "readings": ["sou", "su",],
+            },
+            "退": {
+                "readings": ["tai",],
+            },
+            "仲": {
+                "readings": ["chuu",],
+            },
+            "積": {
+                "readings": ["seki",],
+            },
+            "束": {
+                "readings": ["soku",],
+            },
+            "囲": {
+                "readings": ["i",],
+            },
+            "洋": {
+                "readings": ["you",],
+            },
+            "民": {
+                "readings": ["min",],
+            },
+            "移": {
+                "readings": ["i",],
+            },
+            "床": {
+                "readings": ["shou",],
+            },
+            "黙": {
+                "readings": ["moku", "boku",],
+            },
+            "約": {
+                "readings": ["yaku",],
+            },
+            "視": {
+                "readings": ["shi",],
+            },
+            "建": {
+                "readings": ["ken", "kon",],
+            },
+            "売": {
+                "readings": ["bai",],
+            },
+            "永": {
+                "readings": ["ei",],
+            },
+            "旅": {
+                "readings": ["ryo",],
+            },
+            "怪": {
+                "readings": ["kai", "ke",],
+            },
+            "電": {
+                "readings": ["den",],
+            },
+            "踏": {
+                "readings": ["tou",],
+            },
+            "嫌": {
+                "readings": ["ken", "gen",],
+            },
+            "巻": {
+                "readings": ["kan", "ken",],
+            },
+            "鼻": {
+                "readings": ["bi",],
+            },
+            "筆": {
+                "readings": ["hitsu",],
+            },
+            "探": {
+                "readings": ["tan",],
+            },
+            "歳": {
+                "readings": ["sai", "sei",],
+            },
+            "評": {
+                "readings": ["hyou",],
+            },
+            "保": {
+                "readings": ["ho", "hou",],
+            },
+            "柄": {
+                "readings": ["hei",],
+            },
+            "肩": {
+                "readings": ["ken",],
+            },
+            "娘": {
+                "readings": ["jou",],
+            },
+            "雲": {
+                "readings": ["un",],
+            },
+            "接": {
+                "readings": ["setsu", "shou",],
+            },
+            "境": {
+                "readings": ["kyou", "kei",],
+            },
+            "清": {
+                "readings": ["sei", "shou", "shin",],
+            },
+            "画": {
+                "readings": ["ga", "kaku", "e", "kai",],
+            },
+            "南": {
+                "readings": ["nan", "na",],
+            },
+            "露": {
+                "readings": ["ro", "rou",],
+            },
+            "附": {
+                "readings": ["fu",],
+            },
+            "煙": {
+                "readings": ["en",],
+            },
+            "割": {
+                "readings": ["katsu",],
+            },
+            "志": {
+                "readings": ["shi",],
+            },
+            "松": {
+                "readings": ["shou",],
+            },
+            "荒": {
+                "readings": ["kou",],
+            },
+            "習": {
+                "readings": ["syuu", "ju",],
+            },
+            "沢": {
+                "readings": ["taku",],
+            },
+            "優": {
+                "readings": ["yuu", "u",],
+            },
+            "留": {
+                "readings": ["ryuu", "ru",],
+            },
+            "乱": {
+                "readings": ["ran", "ron",],
+            },
+            "照": {
+                "readings": ["shou",],
+            },
+            "丈": {
+                "readings": ["jou",],
+            },
+            "店": {
+                "readings": ["ten",],
+            },
+            "駄": {
+                "readings": ["da", "ta",],
+            },
+            "波": {
+                "readings": ["ha",],
+            },
+            "校": {
+                "readings": ["kou", "kyou",],
+            },
+            "吉": {
+                "readings": ["kichi", "kitsu",],
+            },
+            "腕": {
+                "readings": ["wan",],
+            },
+            "福": {
+                "readings": ["fuku",],
+            },
+            "寒": {
+                "readings": ["kan",],
+            },
+            "芸": {
+                "readings": ["gei", "un",],
+            },
+            "傾": {
+                "readings": ["kei",],
+            },
+            "短": {
+                "readings": ["tan",],
+            },
+            "陽": {
+                "readings": ["you",],
+            },
+            "器": {
+                "readings": ["ki",],
+            },
+            "休": {
+                "readings": ["kyuu",],
+            },
+            "衣": {
+                "readings": ["i", "e",],
+            },
+            "任": {
+                "readings": ["nin",],
+            },
+            "労": {
+                "readings": ["rou",],
+            },
+            "氏": {
+                "readings": ["shi",],
+            },
+            "為": {
+                "readings": ["i",],
+            },
+            "涙": {
+                "readings": ["rui", "rei",],
+            },
+            "図": {
+                "readings": ["zu", "to",],
+            },
+            "毒": {
+                "readings": ["doku",],
+            },
+            "育": {
+                "readings": ["iku",],
+            },
+            "眠": {
+                "readings": ["min",],
+            },
+            "介": {
+                "readings": ["kai",],
+            },
+            "枚": {
+                "readings": ["mai", "bai",],
+            },
+            "鹿": {
+                "readings": ["roku",],
+            },
+            "筋": {
+                "readings": ["kin",],
+            },
+            "岸": {
+                "readings": ["gan",],
+            },
+            "堂": {
+                "readings": ["dou",],
+            },
+            "参": {
+                "readings": ["san", "shin",],
+            },
+            "諸": {
+                "readings": ["sho",],
+            },
+            "固": {
+                "readings": ["ko",],
+            },
+            "皮": {
+                "readings": ["hi",],
+            },
+            "局": {
+                "readings": ["kyoku",],
+            },
+            "貴": {
+                "readings": ["ki",],
+            },
+            "叫": {
+                "readings": ["kyou",],
+            },
+            "羽": {
+                "readings": ["u",],
+            },
+            "密": {
+                "readings": ["mitsu",],
+            },
+            "礼": {
+                "readings": ["rei", "rai",],
+            },
+            "沈": {
+                "readings": ["chin", "jin",],
+            },
+            "板": {
+                "readings": ["han", "ban",],
+            },
+            "奴": {
+                "readings": ["do",],
+            },
+            "養": {
+                "readings": ["you", "ryou",],
+            },
+            "谷": {
+                "readings": ["koku",],
+            },
+            "珍": {
+                "readings": ["chin",],
+            },
+            "危": {
+                "readings": ["ki",],
+            },
+            "那": {
+                "readings": ["na", "da",],
+            },
+            "改": {
+                "readings": ["kai",],
+            },
+            "晴": {
+                "readings": ["sei",],
+            },
+            "寸": {
+                "readings": ["sun",],
+            },
+            "妻": {
+                "readings": ["sai",],
+            },
+            "傍": {
+                "readings": ["bou",],
+            },
+            "句": {
+                "readings": ["ku",],
+            },
+            "到": {
+                "readings": ["tou",],
+            },
+            "因": {
+                "readings": ["in",],
+            },
+            "里": {
+                "readings": ["ri",],
+            },
+            "屈": {
+                "readings": ["kutsu",],
+            },
+            "印": {
+                "readings": ["in",],
+            },
+            "黄": {
+                "readings": ["kou", "ou",],
+            },
+            "帯": {
+                "readings": ["tai",],
+            },
+            "争": {
+                "readings": ["sou",],
+            },
+            "認": {
+                "readings": ["nin",],
+            },
+            "迷": {
+                "readings": ["mei",],
+            },
+            "宮": {
+                "readings": ["kyuu", "guu", "ku", "kuu",],
+            },
+            "銀": {
+                "readings": ["gin",],
+            },
+            "報": {
+                "readings": ["hou",],
+            },
+            "周": {
+                "readings": ["syuu",],
+            },
+            "髪": {
+                "readings": ["hatsu",],
+            },
+            "隠": {
+                "readings": ["in", "on",],
+            },
+            "包": {
+                "readings": ["hou",],
+            },
+            "欲": {
+                "readings": ["yoku",],
+            },
+            "玉": {
+                "readings": ["gyoku",],
+            },
+            "殊": {
+                "readings": ["shu",],
+            },
+            "済": {
+                "readings": ["sai", "sei",],
+            },
+            "承": {
+                "readings": ["shou", "jou",],
+            },
+            "予": {
+                "readings": ["yo", "sha",],
+            },
+            "便": {
+                "readings": ["ben", "bin",],
+            },
+            "激": {
+                "readings": ["geki",],
+            },
+            "普": {
+                "readings": ["fu",],
+            },
+            "商": {
+                "readings": ["shou",],
+            },
+            "儀": {
+                "readings": ["gi",],
+            },
+            "怒": {
+                "readings": ["do", "nu",],
+            },
+            "狂": {
+                "readings": ["kyou",],
+            },
+            "布": {
+                "readings": ["fu",],
+            },
+            "円": {
+                "readings": ["en",],
+            },
+            "跡": {
+                "readings": ["seki",],
+            },
+            "丸": {
+                "readings": ["gan",],
+            },
+            "市": {
+                "readings": ["shi",],
+            },
+            "職": {
+                "readings": ["shoku", "soku",],
+            },
+            "回": {
+                "readings": ["kai", "e",],
+            },
+            "唯": {
+                "readings": ["yui", "i",],
+            },
+            "層": {
+                "readings": ["sou",],
+            },
+            "戻": {
+                "readings": ["rei",],
+            },
+            "翌": {
+                "readings": ["yoku",],
+            },
+            "橋": {
+                "readings": ["kyou",],
+            },
+            "族": {
+                "readings": ["zoku",],
+            },
+            "描": {
+                "readings": ["byou",],
+            },
+            "訪": {
+                "readings": ["hou",],
+            },
+            "互": {
+                "readings": ["go",],
+            },
+            "捨": {
+                "readings": ["sha",],
+            },
+            "迎": {
+                "readings": ["gei",],
+            },
+            "脱": {
+                "readings": ["datsu",],
+            },
+            "魔": {
+                "readings": ["ma",],
+            },
+            "昼": {
+                "readings": ["chuu",],
+            },
+            "験": {
+                "readings": ["ken", "gen",],
+            },
+            "証": {
+                "readings": ["shou",],
+            },
+            "僕": {
+                "readings": ["boku",],
+            },
+            "弟": {
+                "readings": ["tei", "dai", "de",],
+            },
+            "速": {
+                "readings": ["soku",],
+            },
+            "滅": {
+                "readings": ["metsu",],
+            },
+            "隣": {
+                "readings": ["rin",],
+            },
+            "兵": {
+                "readings": ["hei", "hyou",],
+            },
+            "飲": {
+                "readings": ["in", "on",],
+            },
+            "払": {
+                "readings": ["futsu", "hitsu", "hotsu",],
+            },
+            "焼": {
+                "readings": ["shou",],
+            },
+            "頂": {
+                "readings": ["chou",],
+            },
+            "武": {
+                "readings": ["bu", "mu",],
+            },
+            "洗": {
+                "readings": ["sen",],
+            },
+            "尾": {
+                "readings": ["bi",],
+            },
+            "河": {
+                "readings": ["ka",],
+            },
+            "隅": {
+                "readings": ["guu",],
+            },
+            "団": {
+                "readings": ["dan", "ton",],
+            },
+            "吸": {
+                "readings": ["kyuu",],
+            },
+            "林": {
+                "readings": ["rin",],
+            },
+            "午": {
+                "readings": ["go",],
+            },
+            "傷": {
+                "readings": ["shou",],
+            },
+            "個": {
+                "readings": ["ko", "ka",],
+            },
+            "借": {
+                "readings": ["shaku",],
+            },
+            "罪": {
+                "readings": ["zai",],
+            },
+            "徳": {
+                "readings": ["toku",],
+            },
+            "寺": {
+                "readings": ["ji",],
+            },
+            "兄": {
+                "readings": ["kei", "kyou",],
+            },
+            "映": {
+                "readings": ["ei",],
+            },
+            "惑": {
+                "readings": ["waku",],
+            },
+            "純": {
+                "readings": ["jun",],
+            },
+            "訳": {
+                "readings": ["yaku",],
+            },
+            "騒": {
+                "readings": ["sou",],
+            },
+            "哀": {
+                "readings": ["ai",],
+            },
+            "詰": {
+                "readings": ["kitsu", "kichi",],
+            },
+            "閉": {
+                "readings": ["hei",],
+            },
+            "慮": {
+                "readings": ["ryo",],
+            },
+            "惜": {
+                "readings": ["seki",],
+            },
+            "壁": {
+                "readings": ["heki",],
+            },
+            "試": {
+                "readings": ["shi",],
+            },
+            "刺": {
+                "readings": ["shi",],
+            },
+            "逆": {
+                "readings": ["gyaku", "geki",],
+            },
+            "富": {
+                "readings": ["fu", "fuu",],
+            },
+            "雪": {
+                "readings": ["setsu",],
+            },
+            "触": {
+                "readings": ["shoku",],
+            },
+            "飯": {
+                "readings": ["han",],
+            },
+            "怖": {
+                "readings": ["fu", "ho",],
+            },
+            "房": {
+                "readings": ["bou",],
+            },
+            "迫": {
+                "readings": ["haku",],
+            },
+            "懸": {
+                "readings": ["ken", "ke",],
+            },
+            "即": {
+                "readings": ["soku",],
+            },
+            "挙": {
+                "readings": ["kyo",],
+            },
+            "致": {
+                "readings": ["chi",],
+            },
+            "善": {
+                "readings": ["zen",],
+            },
+            "邪": {
+                "readings": ["ja",],
+            },
+            "額": {
+                "readings": ["gaku",],
+            },
+            "否": {
+                "readings": ["hi",],
+            },
+            "温": {
+                "readings": ["on",],
+            },
+            "矢": {
+                "readings": ["shi",],
+            },
+            "貧": {
+                "readings": ["hin", "bin",],
+            },
+            "列": {
+                "readings": ["retsu", "re",],
+            },
+            "忍": {
+                "readings": ["nin",],
+            },
+            "街": {
+                "readings": ["gai", "kai",],
+            },
+            "亡": {
+                "readings": ["bou", "mou",],
+            },
+            "弁": {
+                "readings": ["ben", "hen",],
+            },
+            "究": {
+                "readings": ["kyuu", "ku",],
+            },
+            "選": {
+                "readings": ["sen",],
+            },
+            "科": {
+                "readings": ["ka",],
+            },
+            "紅": {
+                "readings": ["kou", "ku",],
+            },
+            "官": {
+                "readings": ["kan",],
+            },
+            "勇": {
+                "readings": ["yuu",],
+            },
+            "陰": {
+                "readings": ["in",],
+            },
+            "輪": {
+                "readings": ["rin",],
+            },
+            "香": {
+                "readings": ["kou", "kyou",],
+            },
+            "船": {
+                "readings": ["sen",],
+            },
+            "杯": {
+                "readings": ["hai",],
+            },
+            "威": {
+                "readings": ["i",],
+            },
+            "鉄": {
+                "readings": ["tetsu",],
+            },
+            "郷": {
+                "readings": ["kyou", "gou",],
+            },
+            "史": {
+                "readings": ["shi",],
+            },
+            "群": {
+                "readings": ["gun",],
+            },
+            "員": {
+                "readings": ["in",],
+            },
+            "制": {
+                "readings": ["sei",],
+            },
+            "凡": {
+                "readings": ["bon", "han",],
+            },
+            "握": {
+                "readings": ["aku",],
+            },
+            "憶": {
+                "readings": ["oku",],
+            },
+            "衆": {
+                "readings": ["syuu", "shu",],
+            },
+            "給": {
+                "readings": ["kyuu",],
+            },
+            "懐": {
+                "readings": ["kai", "e",],
+            },
+            "江": {
+                "readings": ["kou",],
+            },
+            "増": {
+                "readings": ["zou",],
+            },
+            "備": {
+                "readings": ["bi",],
+            },
+            "籠": {
+                "readings": ["rou", "ru",],
+            },
+            "充": {
+                "readings": ["juu",],
+            },
+            "慢": {
+                "readings": ["man",],
+            },
+            "装": {
+                "readings": ["sou", "shou",],
+            },
+            "政": {
+                "readings": ["sei", "shou",],
+            },
+            "軍": {
+                "readings": ["gun",],
+            },
+            "枝": {
+                "readings": ["shi",],
+            },
+            "敵": {
+                "readings": ["teki",],
+            },
+            "復": {
+                "readings": ["fuku",],
+            },
+            "冬": {
+                "readings": ["tou",],
+            },
+            "麗": {
+                "readings": ["rei",],
+            },
+            "務": {
+                "readings": ["mu",],
+            },
+            "条": {
+                "readings": ["jou", "chou", "deki",],
+            },
+            "減": {
+                "readings": ["gen",],
+            },
+            "厳": {
+                "readings": ["gen", "gon",],
+            },
+            "完": {
+                "readings": ["kan",],
+            },
+            "歴": {
+                "readings": ["reki", "rekki",],
+            },
+            "繰": {
+                "readings": ["sou",],
+            },
+            "障": {
+                "readings": ["shou",],
+            },
+            "簡": {
+                "readings": ["kan", "ken",],
+            },
+            "疲": {
+                "readings": ["hi",],
+            },
+            "堪": {
+                "readings": ["kan", "tan",],
+            },
+            "写": {
+                "readings": ["sha", "ja",],
+            },
+            "述": {
+                "readings": ["jutsu",],
+            },
+            "己": {
+                "readings": ["ko", "ki",],
+            },
+            "研": {
+                "readings": ["ken",],
+            },
+            "秘": {
+                "readings": ["hi",],
+            },
+            "織": {
+                "readings": ["shoku", "shiki",],
+            },
+            "趣": {
+                "readings": ["shu",],
+            },
+            "染": {
+                "readings": ["sen",],
+            },
+            "提": {
+                "readings": ["tei", "chou", "dai",],
+            },
+            "量": {
+                "readings": ["ryou",],
+            },
+            "恥": {
+                "readings": ["chi",],
+            },
+            "就": {
+                "readings": ["syuu", "ju",],
+            },
+            "却": {
+                "readings": ["kyaku",],
+            },
+            "各": {
+                "readings": ["kaku",],
+            },
+            "瞬": {
+                "readings": ["syun",],
+            },
+            "席": {
+                "readings": ["seki",],
+            },
+            "森": {
+                "readings": ["shin",],
+            },
+            "尊": {
+                "readings": ["son",],
+            },
+            "除": {
+                "readings": ["jo", "ji",],
+            },
+            "軒": {
+                "readings": ["ken",],
+            },
+            "鏡": {
+                "readings": ["kyou", "kei",],
+            },
+            "模": {
+                "readings": ["mo", "bo",],
+            },
+            "暴": {
+                "readings": ["bou", "baku",],
+            },
+            "坊": {
+                "readings": ["bou", "bo-",],
+            },
+            "遺": {
+                "readings": ["i", "yui",],
+            },
+            "米": {
+                "readings": ["bei", "mai", "meetoru",],
+            },
+            "箱": {
+                "readings": ["sou",],
+            },
+            "随": {
+                "readings": ["zui",],
+            },
+            "伏": {
+                "readings": ["fuku",],
+            },
+            "順": {
+                "readings": ["jun",],
+            },
+            "遂": {
+                "readings": ["sui",],
+            },
+            "樹": {
+                "readings": ["ju",],
+            },
+            "執": {
+                "readings": ["shitsu", "syuu",],
+            },
+            "欠": {
+                "readings": ["ketsu", "ken",],
+            },
+            "舎": {
+                "readings": ["sha", "seki",],
+            },
+            "荷": {
+                "readings": ["ka",],
+            },
+            "伴": {
+                "readings": ["han", "ban",],
+            },
+            "既": {
+                "readings": ["ki",],
+            },
+            "絵": {
+                "readings": ["kai", "e",],
+            },
+            "値": {
+                "readings": ["chi",],
+            },
+            "領": {
+                "readings": ["ryou",],
+            },
+            "燃": {
+                "readings": ["nen",],
+            },
+            "浅": {
+                "readings": ["sen",],
+            },
+            "油": {
+                "readings": ["yu", "yuu",],
+            },
+            "登": {
+                "readings": ["tou", "to", "dou", "shou", "chou",],
+            },
+            "伸": {
+                "readings": ["shin",],
+            },
+            "将": {
+                "readings": ["shou", "sou",],
+            },
+            "膝": {
+                "readings": ["shitsu",],
+            },
+            "徒": {
+                "readings": ["to",],
+            },
+            "雄": {
+                "readings": ["yuu",],
+            },
+            "甲": {
+                "readings": ["kou", "kan",],
+            },
+            "巧": {
+                "readings": ["kou",],
+            },
+            "湯": {
+                "readings": ["tou",],
+            },
+            "恋": {
+                "readings": ["ren",],
+            },
+            "憎": {
+                "readings": ["zou",],
+            },
+            "誘": {
+                "readings": ["yuu",],
+            },
+            "院": {
+                "readings": ["in",],
+            },
+            "才": {
+                "readings": ["sai",],
+            },
+            "園": {
+                "readings": ["en",],
+            },
+            "納": {
+                "readings": ["nou", "na-", "na", "nan", "tou",],
+            },
+            "慣": {
+                "readings": ["kan",],
+            },
+            "適": {
+                "readings": ["teki",],
+            },
+            "混": {
+                "readings": ["kon",],
+            },
+            "華": {
+                "readings": ["ka", "ke",],
+            },
+            "棒": {
+                "readings": ["bou",],
+            },
+            "星": {
+                "readings": ["sei", "shou",],
+            },
+            "依": {
+                "readings": ["i", "e",],
+            },
+            "癖": {
+                "readings": ["heki",],
+            },
+            "害": {
+                "readings": ["gai",],
+            },
+            "護": {
+                "readings": ["go",],
+            },
+            "責": {
+                "readings": ["seki",],
+            },
+            "推": {
+                "readings": ["sui",],
+            },
+            "坂": {
+                "readings": ["han",],
+            },
+            "児": {
+                "readings": ["ji", "ni", "gei",],
+            },
+            "敬": {
+                "readings": ["kei", "kyou",],
+            },
+            "吐": {
+                "readings": ["to",],
+            },
+            "価": {
+                "readings": ["ka", "ke",],
+            },
+            "竹": {
+                "readings": ["chiku",],
+            },
+            "詩": {
+                "readings": ["shi",],
+            },
+            "辛": {
+                "readings": ["shin",],
+            },
+            "舌": {
+                "readings": ["zetsu",],
+            },
+            "尽": {
+                "readings": ["jin", "san",],
+            },
+            "藤": {
+                "readings": ["tou", "dou",],
+            },
+            "含": {
+                "readings": ["gan",],
+            },
+            "甚": {
+                "readings": ["jin",],
+            },
+            "添": {
+                "readings": ["ten",],
+            },
+            "俗": {
+                "readings": ["zoku",],
+            },
+            "蔵": {
+                "readings": ["zou", "sou",],
+            },
+            "虫": {
+                "readings": ["chuu", "ki",],
+            },
+            "揚": {
+                "readings": ["you",],
+            },
+            "暫": {
+                "readings": ["zan",],
+            },
+            "垂": {
+                "readings": ["sui",],
+            },
+            "勤": {
+                "readings": ["kin", "gon",],
+            },
+            "脚": {
+                "readings": ["kyaku", "kya", "kaku",],
+            },
+            "是": {
+                "readings": ["ze", "shi",],
+            },
+            "灯": {
+                "readings": ["tou",],
+            },
+            "飾": {
+                "readings": ["shoku",],
+            },
+            "植": {
+                "readings": ["shoku",],
+            },
+            "烈": {
+                "readings": ["retsu",],
+            },
+            "般": {
+                "readings": ["han",],
+            },
+            "展": {
+                "readings": ["ten",],
+            },
+            "健": {
+                "readings": ["ken",],
+            },
+            "王": {
+                "readings": ["ou", "nou",],
+            },
+            "拠": {
+                "readings": ["kyo", "ko",],
+            },
+            "載": {
+                "readings": ["sai",],
+            },
+            "聴": {
+                "readings": ["chou", "tei",],
+            },
+            "芝": {
+                "readings": ["shi",],
+            },
+            "魚": {
+                "readings": ["gyo",],
+            },
+            "犬": {
+                "readings": ["ken",],
+            },
+            "努": {
+                "readings": ["do",],
+            },
+            "宅": {
+                "readings": ["taku",],
+            },
+            "射": {
+                "readings": ["sha",],
+            },
+            "誤": {
+                "readings": ["go",],
+            },
+            "型": {
+                "readings": ["kei",],
+            },
+            "著": {
+                "readings": ["cho", "chaku",],
+            },
+            "寧": {
+                "readings": ["nei",],
+            },
+            "号": {
+                "readings": ["gou",],
+            },
+            "酔": {
+                "readings": ["sui",],
+            },
+            "咲": {
+                "readings": ["shou",],
+            },
+            "泥": {
+                "readings": ["dei", "nai", "de", "ni",],
+            },
+            "辞": {
+                "readings": ["ji",],
+            },
+            "悟": {
+                "readings": ["go",],
+            },
+            "甘": {
+                "readings": ["kan",],
+            },
+            "偶": {
+                "readings": ["guu",],
+            },
+            "権": {
+                "readings": ["ken", "gon",],
+            },
+            "州": {
+                "readings": ["syuu", "su",],
+            },
+            "穴": {
+                "readings": ["ketsu",],
+            },
+            "演": {
+                "readings": ["en",],
+            },
+            "令": {
+                "readings": ["rei",],
+            },
+            "尋": {
+                "readings": ["jin",],
+            },
+            "輝": {
+                "readings": ["ki",],
+            },
+            "仏": {
+                "readings": ["butsu", "futsu",],
+            },
+            "厚": {
+                "readings": ["kou",],
+            },
+            "闇": {
+                "readings": ["an", "on",],
+            },
+            "愚": {
+                "readings": ["gu",],
+            },
+            "袋": {
+                "readings": ["tai", "dai",],
+            },
+            "捕": {
+                "readings": ["ho",],
+            },
+            "劇": {
+                "readings": ["geki",],
+            },
+            "敗": {
+                "readings": ["hai",],
+            },
+            "浴": {
+                "readings": ["yoku",],
+            },
+            "総": {
+                "readings": ["sou",],
+            },
+            "修": {
+                "readings": ["syuu", "shu",],
+            },
+            "益": {
+                "readings": ["eki", "yaku",],
+            },
+            "濃": {
+                "readings": ["nou",],
+            },
+            "章": {
+                "readings": ["shou",],
+            },
+            "英": {
+                "readings": ["ei",],
+            },
+            "寂": {
+                "readings": ["jaku", "seki",],
+            },
+            "扱": {
+                "readings": ["sou", "kyuu",],
+            },
+            "透": {
+                "readings": ["tou",],
+            },
+            "仮": {
+                "readings": ["ka", "ke",],
+            },
+            "避": {
+                "readings": ["hi",],
+            },
+            "乏": {
+                "readings": ["bou",],
+            },
+            "抵": {
+                "readings": ["tei",],
+            },
+            "狭": {
+                "readings": ["kyou", "kou",],
+            },
+            "鮮": {
+                "readings": ["sen",],
+            },
+            "材": {
+                "readings": ["zai",],
+            },
+            "鋭": {
+                "readings": ["ei",],
+            },
+            "練": {
+                "readings": ["ren",],
+            },
+            "資": {
+                "readings": ["shi",],
+            },
+            "功": {
+                "readings": ["kou", "ku",],
+            },
+            "歯": {
+                "readings": ["shi",],
+            },
+            "遣": {
+                "readings": ["ken",],
+            },
+            "城": {
+                "readings": ["jou", "sei",],
+            },
+            "希": {
+                "readings": ["ki", "ke",],
+            },
+            "誌": {
+                "readings": ["shi",],
+            },
+            "豊": {
+                "readings": ["hou", "bu",],
+            },
+            "拾": {
+                "readings": ["syuu", "juu",],
+            },
+            "博": {
+                "readings": ["haku", "baku",],
+            },
+            "祖": {
+                "readings": ["so",],
+            },
+            "救": {
+                "readings": ["kyuu",],
+            },
+            "魂": {
+                "readings": ["kon",],
+            },
+            "換": {
+                "readings": ["kan",],
+            },
+            "費": {
+                "readings": ["hi",],
+            },
+            "険": {
+                "readings": ["ken",],
+            },
+            "警": {
+                "readings": ["kei",],
+            },
+            "埋": {
+                "readings": ["mai",],
+            },
+            "砂": {
+                "readings": ["sa", "sha",],
+            },
+            "干": {
+                "readings": ["kan",],
+            },
+            "虚": {
+                "readings": ["kyo", "ko",],
+            },
+            "館": {
+                "readings": ["kan",],
+            },
+            "統": {
+                "readings": ["tou",],
+            },
+            "尺": {
+                "readings": ["shaku",],
+            },
+            "柱": {
+                "readings": ["chuu",],
+            },
+            "撃": {
+                "readings": ["geki",],
+            },
+            "設": {
+                "readings": ["setsu",],
+            },
+            "汚": {
+                "readings": ["o",],
+            },
+            "旦": {
+                "readings": ["tan", "dan",],
+            },
+            "被": {
+                "readings": ["hi",],
+            },
+            "臭": {
+                "readings": ["syuu",],
+            },
+            "襲": {
+                "readings": ["syuu",],
+            },
+            "畳": {
+                "readings": ["jou", "chou",],
+            },
+            "奉": {
+                "readings": ["hou", "bu",],
+            },
+            "泊": {
+                "readings": ["haku",],
+            },
+            "薬": {
+                "readings": ["yaku",],
+            },
+            "医": {
+                "readings": ["i",],
+            },
+            "躍": {
+                "readings": ["yaku",],
+            },
+            "遅": {
+                "readings": ["chi",],
+            },
+            "戯": {
+                "readings": ["gi", "ge",],
+            },
+            "愉": {
+                "readings": ["yu",],
+            },
+            "称": {
+                "readings": ["shou",],
+            },
+            "銭": {
+                "readings": ["sen", "zen",],
+            },
+            "汗": {
+                "readings": ["kan",],
+            },
+            "幼": {
+                "readings": ["you",],
+            },
+            "技": {
+                "readings": ["gi",],
+            },
+            "婚": {
+                "readings": ["kon",],
+            },
+            "玄": {
+                "readings": ["gen",],
+            },
+            "圧": {
+                "readings": ["atsu", "en", "ou",],
+            },
+            "免": {
+                "readings": ["men",],
+            },
+            "縮": {
+                "readings": ["shuku",],
+            },
+            "暇": {
+                "readings": ["ka",],
+            },
+            "殿": {
+                "readings": ["den", "ten",],
+            },
+            "序": {
+                "readings": ["jo",],
+            },
+            "牛": {
+                "readings": ["gyuu",],
+            },
+            "柔": {
+                "readings": ["juu", "nyuu",],
+            },
+            "衛": {
+                "readings": ["ei", "e",],
+            },
+            "幕": {
+                "readings": ["maku", "baku",],
+            },
+            "揺": {
+                "readings": ["you",],
+            },
+            "遇": {
+                "readings": ["guu",],
+            },
+            "兼": {
+                "readings": ["ken",],
+            },
+            "旧": {
+                "readings": ["kyuu",],
+            },
+            "堅": {
+                "readings": ["ken",],
+            },
+            "尻": {
+                "readings": ["kou",],
+            },
+            "抗": {
+                "readings": ["kou",],
+            },
+            "岡": {
+                "readings": ["kou",],
+            },
+            "省": {
+                "readings": ["sei", "shou",],
+            },
+            "岩": {
+                "readings": ["gan",],
+            },
+            "候": {
+                "readings": ["kou",],
+            },
+            "浪": {
+                "readings": ["rou",],
+            },
+            "宗": {
+                "readings": ["syuu", "sou",],
+            },
+            "泉": {
+                "readings": ["sen",],
+            },
+            "拝": {
+                "readings": ["hai",],
+            },
+            "了": {
+                "readings": ["ryou",],
+            },
+            "導": {
+                "readings": ["dou",],
+            },
+            "拭": {
+                "readings": ["shoku", "shiki",],
+            },
+            "延": {
+                "readings": ["en",],
+            },
+            "刀": {
+                "readings": ["tou",],
+            },
+            "妹": {
+                "readings": ["mai",],
+            },
+            "糸": {
+                "readings": ["shi",],
+            },
+            "澄": {
+                "readings": ["chou",],
+            },
+            "滑": {
+                "readings": ["katsu", "kotsu",],
+            },
+            "釈": {
+                "readings": ["shaku", "seki",],
+            },
+            "駆": {
+                "readings": ["ku",],
+            },
+            "製": {
+                "readings": ["sei",],
+            },
+            "創": {
+                "readings": ["sou", "shou",],
+            },
+            "奮": {
+                "readings": ["fun",],
+            },
+            "震": {
+                "readings": ["shin",],
+            },
+            "専": {
+                "readings": ["sen",],
+            },
+            "僧": {
+                "readings": ["sou",],
+            },
+            "誇": {
+                "readings": ["ko",],
+            },
+            "机": {
+                "readings": ["ki",],
+            },
+            "級": {
+                "readings": ["kyuu",],
+            },
+            "届": {
+                "readings": ["kai",],
+            },
+            "収": {
+                "readings": ["syuu",],
+            },
+            "枕": {
+                "readings": ["chin", "shin",],
+            },
+            "挨": {
+                "readings": ["ai",],
+            },
+            "針": {
+                "readings": ["shin",],
+            },
+            "停": {
+                "readings": ["tei",],
+            },
+            "看": {
+                "readings": ["kan",],
+            },
+            "栄": {
+                "readings": ["ei", "you",],
+            },
+            "粉": {
+                "readings": ["fun",],
+            },
+            "拶": {
+                "readings": ["satsu",],
+            },
+            "乾": {
+                "readings": ["kan", "ken",],
+            },
+            "帳": {
+                "readings": ["chou",],
+            },
+            "占": {
+                "readings": ["sen",],
+            },
+            "鬼": {
+                "readings": ["ki",],
+            },
+            "奪": {
+                "readings": ["datsu",],
+            },
+            "築": {
+                "readings": ["chiku",],
+            },
+            "僅": {
+                "readings": ["kin", "gon",],
+            },
+            "眉": {
+                "readings": ["bi", "mi",],
+            },
+            "概": {
+                "readings": ["gai",],
+            },
+            "整": {
+                "readings": ["sei",],
+            },
+            "鉢": {
+                "readings": ["hachi", "hatsu",],
+            },
+            "唇": {
+                "readings": ["shin",],
+            },
+            "紫": {
+                "readings": ["shi",],
+            },
+            "塗": {
+                "readings": ["to",],
+            },
+            "忠": {
+                "readings": ["chuu",],
+            },
+            "弾": {
+                "readings": ["dan", "tan",],
+            },
+            "帽": {
+                "readings": ["bou", "mou",],
+            },
+            "損": {
+                "readings": ["son",],
+            },
+            "凝": {
+                "readings": ["gyou",],
+            },
+            "招": {
+                "readings": ["shou",],
+            },
+            "袖": {
+                "readings": ["syuu",],
+            },
+            "憂": {
+                "readings": ["yuu",],
+            },
+            "基": {
+                "readings": ["ki",],
+            },
+            "崩": {
+                "readings": ["hou",],
+            },
+            "俺": {
+                "readings": ["en",],
+            },
+            "灰": {
+                "readings": ["kai",],
+            },
+            "区": {
+                "readings": ["ku", "ou", "kou",],
+            },
+            "卑": {
+                "readings": ["hi",],
+            },
+            "府": {
+                "readings": ["fu",],
+            },
+            "覧": {
+                "readings": ["ran",],
+            },
+            "謝": {
+                "readings": ["sha",],
+            },
+            "枯": {
+                "readings": ["ko",],
+            },
+            "熟": {
+                "readings": ["jyuku",],
+            },
+            "準": {
+                "readings": ["jun",],
+            },
+            "姓": {
+                "readings": ["sei", "shou",],
+            },
+            "忙": {
+                "readings": ["bou", "mou",],
+            },
+            "霊": {
+                "readings": ["rei", "ryou",],
+            },
+            "繁": {
+                "readings": ["han",],
+            },
+            "潜": {
+                "readings": ["sen",],
+            },
+            "較": {
+                "readings": ["kaku", "kou",],
+            },
+            "算": {
+                "readings": ["san",],
+            },
+            "緑": {
+                "readings": ["ryoku", "roku",],
+            },
+            "財": {
+                "readings": ["zai", "sai", "zoku",],
+            },
+            "潮": {
+                "readings": ["chou",],
+            },
+            "叱": {
+                "readings": ["shitsu", "shichi",],
+            },
+            "源": {
+                "readings": ["gen",],
+            },
+            "講": {
+                "readings": ["kou",],
+            },
+            "佐": {
+                "readings": ["sa",],
+            },
+            "汽": {
+                "readings": ["ki",],
+            },
+            "録": {
+                "readings": ["roku",],
+            },
+            "池": {
+                "readings": ["chi",],
+            },
+            "悩": {
+                "readings": ["nou",],
+            },
+            "慰": {
+                "readings": ["i",],
+            },
+            "輩": {
+                "readings": ["hai",],
+            },
+            "召": {
+                "readings": ["shou",],
+            },
+            "棄": {
+                "readings": ["ki",],
+            },
+            "規": {
+                "readings": ["ki",],
+            },
+            "標": {
+                "readings": ["hyou",],
+            },
+            "締": {
+                "readings": ["tei",],
+            },
+            "隔": {
+                "readings": ["kaku",],
+            },
+            "呉": {
+                "readings": ["go",],
+            },
+            "淡": {
+                "readings": ["tan",],
+            },
+            "禁": {
+                "readings": ["kin",],
+            },
+            "批": {
+                "readings": ["hi",],
+            },
+            "陸": {
+                "readings": ["riku", "roku",],
+            },
+            "倉": {
+                "readings": ["sou",],
+            },
+            "尚": {
+                "readings": ["shou",],
+            },
+            "肌": {
+                "readings": ["ki",],
+            },
+            "暖": {
+                "readings": ["dan", "non",],
+            },
+            "涯": {
+                "readings": ["gai",],
+            },
+            "貫": {
+                "readings": ["kan",],
+            },
+            "顧": {
+                "readings": ["ko",],
+            },
+            "隙": {
+                "readings": ["geki", "kyaku", "keki",],
+            },
+            "剣": {
+                "readings": ["ken",],
+            },
+            "紀": {
+                "readings": ["ki",],
+            },
+            "婆": {
+                "readings": ["ba",],
+            },
+            "匂": {
+                "readings": ["niou", "nioi", "niowaseru",],
+            },
+            "湧": {
+                "readings": ["yuu", "you", "yu",],
+            },
+            "効": {
+                "readings": ["kou",],
+            },
+            "徹": {
+                "readings": ["tetsu",],
+            },
+            "凄": {
+                "readings": ["sei", "sai",],
+            },
+            "据": {
+                "readings": ["kyo",],
+            },
+            "漸": {
+                "readings": ["zen",],
+            },
+            "豪": {
+                "readings": ["gou",],
+            },
+            "裂": {
+                "readings": ["retsu",],
+            },
+            "衝": {
+                "readings": ["shou",],
+            },
+            "焦": {
+                "readings": ["shou",],
+            },
+            "勘": {
+                "readings": ["kan",],
+            },
+            "管": {
+                "readings": ["kan",],
+            },
+            "属": {
+                "readings": ["zoku", "shoku",],
+            },
+            "梅": {
+                "readings": ["bai",],
+            },
+            "略": {
+                "readings": ["ryaku",],
+            },
+            "悔": {
+                "readings": ["kai",],
+            },
+            "畑": {
+                "readings": ["hata", "hatake", "batake",],
+            },
+            "闘": {
+                "readings": ["tou",],
+            },
+            "姉": {
+                "readings": ["shi",],
+            },
+            "壇": {
+                "readings": ["dan", "tan",],
+            },
+            "嘆": {
+                "readings": ["tan",],
+            },
+            "防": {
+                "readings": ["bou",],
+            },
+            "貸": {
+                "readings": ["tai",],
+            },
+            "隊": {
+                "readings": ["tai",],
+            },
+            "卒": {
+                "readings": ["sotsu", "shutsu",],
+            },
+            "偉": {
+                "readings": ["i",],
+            },
+            "釣": {
+                "readings": ["chou",],
+            },
+            "訴": {
+                "readings": ["so",],
+            },
+            "廊": {
+                "readings": ["rou",],
+            },
+            "康": {
+                "readings": ["kou",],
+            },
+            "垣": {
+                "readings": ["en",],
+            },
+            "柳": {
+                "readings": ["ryuu",],
+            },
+            "棚": {
+                "readings": ["hou",],
+            },
+            "検": {
+                "readings": ["ken",],
+            },
+            "祝": {
+                "readings": ["shuku", "syuu",],
+            },
+            "封": {
+                "readings": ["fuu", "hou",],
+            },
+            "徴": {
+                "readings": ["chou", "chi",],
+            },
+            "編": {
+                "readings": ["hen",],
+            },
+            "稽": {
+                "readings": ["kei",],
+            },
+            "宜": {
+                "readings": ["gi",],
+            },
+            "倍": {
+                "readings": ["bai",],
+            },
+            "唐": {
+                "readings": ["tou",],
+            },
+            "肥": {
+                "readings": ["hi",],
+            },
+            "祭": {
+                "readings": ["sai",],
+            },
+            "週": {
+                "readings": ["syuu",],
+            },
+            "聖": {
+                "readings": ["sei", "shou",],
+            },
+            "詳": {
+                "readings": ["shou",],
+            },
+            "賞": {
+                "readings": ["shou",],
+            },
+            "嫁": {
+                "readings": ["ka",],
+            },
+            "彩": {
+                "readings": ["sai",],
+            },
+            "農": {
+                "readings": ["nou",],
+            },
+            "窮": {
+                "readings": ["kyuu", "kyou",],
+            },
+            "閑": {
+                "readings": ["kan",],
+            },
+            "査": {
+                "readings": ["sa",],
+            },
+            "乳": {
+                "readings": ["nyuu",],
+            },
+            "呂": {
+                "readings": ["ro", "ryo",],
+            },
+            "営": {
+                "readings": ["ei",],
+            },
+            "幻": {
+                "readings": ["gen",],
+            },
+            "憤": {
+                "readings": ["fun",],
+            },
+            "腐": {
+                "readings": ["fu",],
+            },
+            "昭": {
+                "readings": ["shou",],
+            },
+            "粗": {
+                "readings": ["so",],
+            },
+            "札": {
+                "readings": ["satsu",],
+            },
+            "暑": {
+                "readings": ["sho",],
+            },
+            "裸": {
+                "readings": ["ra",],
+            },
+            "宝": {
+                "readings": ["hou",],
+            },
+            "津": {
+                "readings": ["shin",],
+            },
+            "勉": {
+                "readings": ["ben",],
+            },
+            "犯": {
+                "readings": ["han", "bon",],
+            },
+            "酷": {
+                "readings": ["koku",],
+            },
+            "劣": {
+                "readings": ["retsu",],
+            },
+            "裁": {
+                "readings": ["sai",],
+            },
+            "惨": {
+                "readings": ["san", "zan",],
+            },
+            "催": {
+                "readings": ["sai",],
+            },
+            "羅": {
+                "readings": ["ra",],
+            },
+            "貌": {
+                "readings": ["bou", "baku",],
+            },
+            "飽": {
+                "readings": ["hou",],
+            },
+            "喉": {
+                "readings": ["kou",],
+            },
+            "胆": {
+                "readings": ["tan",],
+            },
+            "策": {
+                "readings": ["saku",],
+            },
+            "崎": {
+                "readings": ["ki",],
+            },
+            "掌": {
+                "readings": ["shou",],
+            },
+            "衰": {
+                "readings": ["sui",],
+            },
+            "唱": {
+                "readings": ["shou",],
+            },
+            "幅": {
+                "readings": ["fuku",],
+            },
+            "猫": {
+                "readings": ["byou",],
+            },
+            "鬱": {
+                "readings": ["utsu",],
+            },
+            "則": {
+                "readings": ["soku",],
+            },
+            "漢": {
+                "readings": ["kan",],
+            },
+            "卓": {
+                "readings": ["taku",],
+            },
+            "紛": {
+                "readings": ["fun",],
+            },
+            "豆": {
+                "readings": ["tou", "zu",],
+            },
+            "麻": {
+                "readings": ["ma", "maa",],
+            },
+            "綿": {
+                "readings": ["men",],
+            },
+            "央": {
+                "readings": ["ou",],
+            },
+            "孤": {
+                "readings": ["ko",],
+            },
+            "斜": {
+                "readings": ["sha",],
+            },
+            "瀬": {
+                "readings": ["rai",],
+            },
+            "祈": {
+                "readings": ["ki",],
+            },
+            "蓋": {
+                "readings": ["gai", "kai", "kou",],
+            },
+            "敢": {
+                "readings": ["kan",],
+            },
+            "盗": {
+                "readings": ["tou",],
+            },
+            "逸": {
+                "readings": ["itsu",],
+            },
+            "掘": {
+                "readings": ["kutsu",],
+            },
+            "律": {
+                "readings": ["ritsu", "richi", "retsu",],
+            },
+            "控": {
+                "readings": ["kou",],
+            },
+            "拍": {
+                "readings": ["haku", "hyou",],
+            },
+            "複": {
+                "readings": ["fuku",],
+            },
+            "拡": {
+                "readings": ["kaku", "kou",],
+            },
+            "椅": {
+                "readings": ["i",],
+            },
+            "乞": {
+                "readings": ["kotsu", "kitsu", "ki", "kike", "kochi",],
+            },
+            "沙": {
+                "readings": ["sa", "sha",],
+            },
+            "壊": {
+                "readings": ["kai", "e",],
+            },
+            "痩": {
+                "readings": ["sou", "chuu", "syuu", "shu",],
+            },
+            "踊": {
+                "readings": ["you",],
+            },
+            "茂": {
+                "readings": ["mo",],
+            },
+            "緊": {
+                "readings": ["kin",],
+            },
+            "没": {
+                "readings": ["botsu", "motsu",],
+            },
+            "猛": {
+                "readings": ["mou",],
+            },
+            "墓": {
+                "readings": ["bo",],
+            },
+            "授": {
+                "readings": ["ju",],
+            },
+            "幽": {
+                "readings": ["yuu",],
+            },
+            "丹": {
+                "readings": ["tan",],
+            },
+            "革": {
+                "readings": ["kaku",],
+            },
+            "獄": {
+                "readings": ["goku",],
+            },
+            "襟": {
+                "readings": ["kin",],
+            },
+            "臨": {
+                "readings": ["rin",],
+            },
+            "誠": {
+                "readings": ["sei",],
+            },
+            "匹": {
+                "readings": ["hitsu",],
+            },
+            "亭": {
+                "readings": ["tei", "chin",],
+            },
+            "縛": {
+                "readings": ["baku",],
+            },
+            "恩": {
+                "readings": ["on",],
+            },
+            "歓": {
+                "readings": ["kan",],
+            },
+            "靴": {
+                "readings": ["ka",],
+            },
+            "季": {
+                "readings": ["ki",],
+            },
+            "頑": {
+                "readings": ["gan",],
+            },
+            "敏": {
+                "readings": ["bin",],
+            },
+            "氷": {
+                "readings": ["hyou",],
+            },
+            "請": {
+                "readings": ["sei", "shin", "shou",],
+            },
+            "率": {
+                "readings": ["sotsu", "ritsu", "shutsu",],
+            },
+            "巡": {
+                "readings": ["jun",],
+            },
+            "曇": {
+                "readings": ["don",],
+            },
+            "宇": {
+                "readings": ["u",],
+            },
+            "裾": {
+                "readings": ["kyo", "ko",],
+            },
+            "陥": {
+                "readings": ["kan",],
+            },
+            "範": {
+                "readings": ["han",],
+            },
+            "鼓": {
+                "readings": ["ko",],
+            },
+            "旗": {
+                "readings": ["ki",],
+            },
+            "紹": {
+                "readings": ["shou",],
+            },
+            "恵": {
+                "readings": ["kei", "e",],
+            },
+            "笛": {
+                "readings": ["teki",],
+            },
+            "抑": {
+                "readings": ["yoku",],
+            },
+            "巨": {
+                "readings": ["kyo",],
+            },
+            "球": {
+                "readings": ["kyuu",],
+            },
+            "掃": {
+                "readings": ["sou", "shu",],
+            },
+            "葬": {
+                "readings": ["sou",],
+            },
+            "脈": {
+                "readings": ["myaku",],
+            },
+            "版": {
+                "readings": ["han",],
+            },
+            "爪": {
+                "readings": ["sou",],
+            },
+            "脳": {
+                "readings": ["nou", "dou",],
+            },
+            "宣": {
+                "readings": ["sen",],
+            },
+            "壮": {
+                "readings": ["sou",],
+            },
+            "帝": {
+                "readings": ["tei",],
+            },
+            "舟": {
+                "readings": ["syuu",],
+            },
+            "秀": {
+                "readings": ["syuu",],
+            },
+            "網": {
+                "readings": ["mou",],
+            },
+            "骸": {
+                "readings": ["gai", "kai",],
+            },
+            "賢": {
+                "readings": ["ken",],
+            },
+            "替": {
+                "readings": ["tai",],
+            },
+            "冗": {
+                "readings": ["jou",],
+            },
+            "典": {
+                "readings": ["ten", "den",],
+            },
+            "潔": {
+                "readings": ["ketsu",],
+            },
+            "災": {
+                "readings": ["sai",],
+            },
+            "磨": {
+                "readings": ["ma",],
+            },
+            "醜": {
+                "readings": ["syuu",],
+            },
+            "漂": {
+                "readings": ["hyou",],
+            },
+            "促": {
+                "readings": ["soku",],
+            },
+            "縫": {
+                "readings": ["hou",],
+            },
+            "扉": {
+                "readings": ["hi",],
+            },
+            "担": {
+                "readings": ["tan",],
+            },
+            "魅": {
+                "readings": ["mi",],
+            },
+            "拘": {
+                "readings": ["kou",],
+            },
+            "煮": {
+                "readings": ["sha",],
+            },
+            "審": {
+                "readings": ["shin",],
+            },
+            "競": {
+                "readings": ["kyou", "kei",],
+            },
+            "廃": {
+                "readings": ["hai",],
+            },
+            "械": {
+                "readings": ["kai",],
+            },
+            "揮": {
+                "readings": ["ki",],
+            },
+            "宵": {
+                "readings": ["shou",],
+            },
+            "蛇": {
+                "readings": ["ja", "da", "i", "ya",],
+            },
+            "継": {
+                "readings": ["kei",],
+            },
+            "冠": {
+                "readings": ["kan",],
+            },
+            "預": {
+                "readings": ["yo",],
+            },
+            "巣": {
+                "readings": ["sou",],
+            },
+            "覆": {
+                "readings": ["fuku",],
+            },
+            "沿": {
+                "readings": ["en",],
+            },
+            "浜": {
+                "readings": ["hin",],
+            },
+            "鈴": {
+                "readings": ["rei", "rin",],
+            },
+            "頓": {
+                "readings": ["ton", "totsu",],
+            },
+            "渉": {
+                "readings": ["shou",],
+            },
+            "採": {
+                "readings": ["sai",],
+            },
+            "涼": {
+                "readings": ["ryou",],
+            },
+            "戒": {
+                "readings": ["kai",],
+            },
+            "庫": {
+                "readings": ["ko", "ku",],
+            },
+            "企": {
+                "readings": ["ki",],
+            },
+            "監": {
+                "readings": ["kan",],
+            },
+            "睡": {
+                "readings": ["sui",],
+            },
+            "煩": {
+                "readings": ["han", "bon",],
+            },
+            "霧": {
+                "readings": ["mu", "bou", "bu",],
+            },
+            "索": {
+                "readings": ["saku",],
+            },
+            "童": {
+                "readings": ["dou",],
+            },
+            "絡": {
+                "readings": ["raku",],
+            },
+            "昇": {
+                "readings": ["shou",],
+            },
+            "稿": {
+                "readings": ["kou",],
+            },
+            "脇": {
+                "readings": ["kyou",],
+            },
+            "測": {
+                "readings": ["soku",],
+            },
+            "瓦": {
+                "readings": ["ga",],
+            },
+            "鈍": {
+                "readings": ["don",],
+            },
+            "盤": {
+                "readings": ["ban",],
+            },
+            "恨": {
+                "readings": ["kon",],
+            },
+            "併": {
+                "readings": ["hei",],
+            },
+            "菜": {
+                "readings": ["sai",],
+            },
+            "斎": {
+                "readings": ["sai",],
+            },
+            "戴": {
+                "readings": ["tai",],
+            },
+            "唄": {
+                "readings": ["bai",],
+            },
+            "寛": {
+                "readings": ["kan",],
+            },
+            "塩": {
+                "readings": ["en",],
+            },
+            "孫": {
+                "readings": ["son",],
+            },
+            "協": {
+                "readings": ["kyou",],
+            },
+            "浸": {
+                "readings": ["shin",],
+            },
+            "距": {
+                "readings": ["kyo",],
+            },
+            "剥": {
+                "readings": ["haku", "hoku",],
+            },
+            "双": {
+                "readings": ["sou",],
+            },
+            "偽": {
+                "readings": ["gi", "ka",],
+            },
+            "紋": {
+                "readings": ["mon",],
+            },
+            "蹴": {
+                "readings": ["shuku", "syuu",],
+            },
+            "桜": {
+                "readings": ["ou", "you",],
+            },
+            "刑": {
+                "readings": ["kei",],
+            },
+            "瓶": {
+                "readings": ["bin",],
+            },
+            "旨": {
+                "readings": ["shi",],
+            },
+            "厄": {
+                "readings": ["yaku",],
+            },
+            "肝": {
+                "readings": ["kan",],
+            },
+            "超": {
+                "readings": ["chou",],
+            },
+            "丘": {
+                "readings": ["kyuu",],
+            },
+            "某": {
+                "readings": ["bou",],
+            },
+            "怠": {
+                "readings": ["tai",],
+            },
+            "裕": {
+                "readings": ["yuu",],
+            },
+            "悦": {
+                "readings": ["etsu",],
+            },
+            "陣": {
+                "readings": ["jin",],
+            },
+            "臣": {
+                "readings": ["shin", "jin",],
+            },
+            "皿": {
+                "readings": ["bei",],
+            },
+            "委": {
+                "readings": ["i",],
+            },
+            "遍": {
+                "readings": ["hen",],
+            },
+            "環": {
+                "readings": ["kan",],
+            },
+            "芽": {
+                "readings": ["ga",],
+            },
+            "施": {
+                "readings": ["shi", "se",],
+            },
+            "攻": {
+                "readings": ["kou",],
+            },
+            "菓": {
+                "readings": ["ka",],
+            },
+            "蔑": {
+                "readings": ["betsu",],
+            },
+            "粋": {
+                "readings": ["sui",],
+            },
+            "補": {
+                "readings": ["ho",],
+            },
+            "頻": {
+                "readings": ["hin",],
+            },
+            "操": {
+                "readings": ["sou", "san",],
+            },
+            "桃": {
+                "readings": ["tou",],
+            },
+            "穏": {
+                "readings": ["on",],
+            },
+            "賀": {
+                "readings": ["ga",],
+            },
+            "砲": {
+                "readings": ["hou",],
+            },
+            "宙": {
+                "readings": ["chuu",],
+            },
+            "膚": {
+                "readings": ["fu",],
+            },
+            "訓": {
+                "readings": ["kun", "kin",],
+            },
+            "杉": {
+                "readings": ["san",],
+            },
+            "窟": {
+                "readings": ["kutsu", "kotsu",],
+            },
+            "盲": {
+                "readings": ["mou",],
+            },
+            "炭": {
+                "readings": ["tan",],
+            },
+            "菊": {
+                "readings": ["kiku",],
+            },
+            "獣": {
+                "readings": ["juu",],
+            },
+            "討": {
+                "readings": ["tou",],
+            },
+            "齢": {
+                "readings": ["rei",],
+            },
+            "捜": {
+                "readings": ["sou", "shu", "syuu",],
+            },
+            "履": {
+                "readings": ["ri",],
+            },
+            "嘲": {
+                "readings": ["chou", "tou",],
+            },
+            "銘": {
+                "readings": ["mei",],
+            },
+            "彫": {
+                "readings": ["chou",],
+            },
+            "忌": {
+                "readings": ["ki",],
+            },
+            "仙": {
+                "readings": ["sen", "sento",],
+            },
+            "冒": {
+                "readings": ["bou",],
+            },
+            "臓": {
+                "readings": ["zou",],
+            },
+            "炎": {
+                "readings": ["en",],
+            },
+            "墨": {
+                "readings": ["boku",],
+            },
+            "漠": {
+                "readings": ["baku",],
+            },
+            "猿": {
+                "readings": ["en",],
+            },
+            "跳": {
+                "readings": ["chou",],
+            },
+            "悠": {
+                "readings": ["yuu",],
+            },
+            "渋": {
+                "readings": ["juu", "syuu",],
+            },
+            "硝": {
+                "readings": ["shou",],
+            },
+            "哲": {
+                "readings": ["tetsu",],
+            },
+            "党": {
+                "readings": ["tou",],
+            },
+            "綱": {
+                "readings": ["kou",],
+            },
+            "縦": {
+                "readings": ["juu",],
+            },
+            "邸": {
+                "readings": ["tei",],
+            },
+            "辱": {
+                "readings": ["joku",],
+            },
+            "駅": {
+                "readings": ["eki",],
+            },
+            "司": {
+                "readings": ["shi",],
+            },
+            "濁": {
+                "readings": ["daku", "joku",],
+            },
+            "粒": {
+                "readings": ["ryuu",],
+            },
+            "域": {
+                "readings": ["iki",],
+            },
+            "臆": {
+                "readings": ["oku", "yoku",],
+            },
+            "罰": {
+                "readings": ["batsu", "bachi", "hatsu",],
+            },
+            "醒": {
+                "readings": ["sei",],
+            },
+            "痴": {
+                "readings": ["chi",],
+            },
+            "伯": {
+                "readings": ["haku",],
+            },
+            "蒸": {
+                "readings": ["jou", "sei",],
+            },
+            "汰": {
+                "readings": ["ta", "tai",],
+            },
+            "盆": {
+                "readings": ["bon",],
+            },
+            "摘": {
+                "readings": ["teki",],
+            },
+            "詞": {
+                "readings": ["shi",],
+            },
+            "慌": {
+                "readings": ["kou",],
+            },
+            "課": {
+                "readings": ["ka",],
+            },
+            "冊": {
+                "readings": ["satsu", "saku",],
+            },
+            "熊": {
+                "readings": ["yuu",],
+            },
+            "鐘": {
+                "readings": ["shou",],
+            },
+            "泳": {
+                "readings": ["ei",],
+            },
+            "飼": {
+                "readings": ["shi",],
+            },
+            "拙": {
+                "readings": ["setsu",],
+            },
+            "麦": {
+                "readings": ["baku",],
+            },
+            "捉": {
+                "readings": ["soku", "saku",],
+            },
+            "咽": {
+                "readings": ["in", "en", "etsu",],
+            },
+            "伺": {
+                "readings": ["shi",],
+            },
+            "仁": {
+                "readings": ["jin", "ni", "nin",],
+            },
+            "鑑": {
+                "readings": ["kan",],
+            },
+            "嬢": {
+                "readings": ["jou",],
+            },
+            "幹": {
+                "readings": ["kan",],
+            },
+            "脅": {
+                "readings": ["kyou",],
+            },
+            "銅": {
+                "readings": ["dou",],
+            },
+            "艶": {
+                "readings": ["en",],
+            },
+            "稲": {
+                "readings": ["tou", "te",],
+            },
+            "献": {
+                "readings": ["ken", "kon",],
+            },
+            "慈": {
+                "readings": ["ji",],
+            },
+            "諦": {
+                "readings": ["tei", "tai",],
+            },
+            "宛": {
+                "readings": ["en",],
+            },
+            "貨": {
+                "readings": ["ka",],
+            },
+            "牧": {
+                "readings": ["boku",],
+            },
+            "雷": {
+                "readings": ["rai",],
+            },
+            "猶": {
+                "readings": ["yuu", "yu",],
+            },
+            "潰": {
+                "readings": ["kai", "e",],
+            },
+            "系": {
+                "readings": ["kei",],
+            },
+            "牲": {
+                "readings": ["sei",],
+            },
+            "誉": {
+                "readings": ["yo",],
+            },
+            "罵": {
+                "readings": ["ba",],
+            },
+            "畜": {
+                "readings": ["chiku",],
+            },
+            "怨": {
+                "readings": ["en", "on", "un",],
+            },
+            "弄": {
+                "readings": ["rou", "ru",],
+            },
+            "賛": {
+                "readings": ["san",],
+            },
+            "絹": {
+                "readings": ["ken",],
+            },
+            "筒": {
+                "readings": ["tou",],
+            },
+            "皇": {
+                "readings": ["kou", "ou",],
+            },
+            "塞": {
+                "readings": ["soku", "sai",],
+            },
+            "慨": {
+                "readings": ["gai",],
+            },
+            "督": {
+                "readings": ["toku",],
+            },
+            "洞": {
+                "readings": ["dou",],
+            },
+            "股": {
+                "readings": ["ko",],
+            },
+            "汁": {
+                "readings": ["juu",],
+            },
+            "獲": {
+                "readings": ["kaku",],
+            },
+            "譲": {
+                "readings": ["jou",],
+            },
+            "漁": {
+                "readings": ["gyo", "ryou",],
+            },
+            "勧": {
+                "readings": ["kan", "ken",],
+            },
+            "珠": {
+                "readings": ["shu",],
+            },
+            "肯": {
+                "readings": ["kou",],
+            },
+            "胴": {
+                "readings": ["dou",],
+            },
+            "箇": {
+                "readings": ["ka", "ko",],
+            },
+            "阪": {
+                "readings": ["han",],
+            },
+            "錯": {
+                "readings": ["saku", "shaku",],
+            },
+            "堀": {
+                "readings": ["kutsu",],
+            },
+            "耐": {
+                "readings": ["tai",],
+            },
+            "詮": {
+                "readings": ["sen",],
+            },
+            "粧": {
+                "readings": ["shou",],
+            },
+            "且": {
+                "readings": ["sho", "so", "shou",],
+            },
+            "翼": {
+                "readings": ["yoku",],
+            },
+            "摩": {
+                "readings": ["ma",],
+            },
+            "絞": {
+                "readings": ["kou",],
+            },
+            "崖": {
+                "readings": ["gai", "ge", "gi",],
+            },
+            "膳": {
+                "readings": ["zen", "sen",],
+            },
+            "疾": {
+                "readings": ["shitsu",],
+            },
+            "呪": {
+                "readings": ["ju", "shu", "syuu", "zu",],
+            },
+            "弥": {
+                "readings": ["mi", "bi",],
+            },
+            "紳": {
+                "readings": ["shin",],
+            },
+            "朗": {
+                "readings": ["rou",],
+            },
+            "渦": {
+                "readings": ["ka",],
+            },
+            "還": {
+                "readings": ["kan",],
+            },
+            "曜": {
+                "readings": ["you",],
+            },
+            "刷": {
+                "readings": ["satsu",],
+            },
+            "砕": {
+                "readings": ["sai",],
+            },
+            "俳": {
+                "readings": ["hai",],
+            },
+            "疎": {
+                "readings": ["so", "sho",],
+            },
+            "懇": {
+                "readings": ["kon",],
+            },
+            "翻": {
+                "readings": ["hon", "han",],
+            },
+            "賃": {
+                "readings": ["chin",],
+            },
+            "侍": {
+                "readings": ["ji", "shi",],
+            },
+            "塀": {
+                "readings": ["hei", "bei",],
+            },
+            "喚": {
+                "readings": ["kan",],
+            },
+            "鍵": {
+                "readings": ["ken",],
+            },
+            "朱": {
+                "readings": ["shu",],
+            },
+            "謀": {
+                "readings": ["bou", "mu",],
+            },
+            "痕": {
+                "readings": ["kon",],
+            },
+            "患": {
+                "readings": ["kan",],
+            },
+            "霜": {
+                "readings": ["sou",],
+            },
+            "掲": {
+                "readings": ["kei",],
+            },
+            "滴": {
+                "readings": ["teki",],
+            },
+            "奏": {
+                "readings": ["sou",],
+            },
+            "征": {
+                "readings": ["sei",],
+            },
+            "雇": {
+                "readings": ["ko",],
+            },
+            "浄": {
+                "readings": ["jou", "sei",],
+            },
+            "吟": {
+                "readings": ["gin",],
+            },
+            "縄": {
+                "readings": ["jou",],
+            },
+            "架": {
+                "readings": ["ka",],
+            },
+            "斬": {
+                "readings": ["zan", "san", "sen", "zen",],
+            },
+            "滞": {
+                "readings": ["tai", "tei",],
+            },
+            "漫": {
+                "readings": ["man",],
+            },
+            "傘": {
+                "readings": ["san",],
+            },
+            "匠": {
+                "readings": ["shou",],
+            },
+            "爆": {
+                "readings": ["baku",],
+            },
+            "鎖": {
+                "readings": ["sa",],
+            },
+            "陶": {
+                "readings": ["tou",],
+            },
+            "雅": {
+                "readings": ["ga",],
+            },
+            "扇": {
+                "readings": ["sen",],
+            },
+            "励": {
+                "readings": ["rei",],
+            },
+            "刊": {
+                "readings": ["kan",],
+            },
+            "慕": {
+                "readings": ["bo",],
+            },
+            "犠": {
+                "readings": ["gi", "ki",],
+            },
+            "贈": {
+                "readings": ["zou", "sou",],
+            },
+            "巾": {
+                "readings": ["kin", "fuku",],
+            },
+            "拒": {
+                "readings": ["kyo", "go",],
+            },
+            "刃": {
+                "readings": ["jin", "nin",],
+            },
+            "欄": {
+                "readings": ["ran",],
+            },
+            "瞭": {
+                "readings": ["ryou",],
+            },
+            "荘": {
+                "readings": ["sou", "shou", "chan",],
+            },
+            "喫": {
+                "readings": ["kitsu",],
+            },
+            "拳": {
+                "readings": ["ken", "gen",],
+            },
+            "羨": {
+                "readings": ["sen", "en",],
+            },
+            "績": {
+                "readings": ["seki",],
+            },
+            "緩": {
+                "readings": ["kan",],
+            },
+            "塊": {
+                "readings": ["kai", "ke",],
+            },
+            "維": {
+                "readings": ["i",],
+            },
+            "遮": {
+                "readings": ["sha",],
+            },
+            "旋": {
+                "readings": ["sen",],
+            },
+            "稼": {
+                "readings": ["ka",],
+            },
+            "稚": {
+                "readings": ["chi", "ji",],
+            },
+            "況": {
+                "readings": ["kyou",],
+            },
+            "盾": {
+                "readings": ["jun",],
+            },
+            "塔": {
+                "readings": ["tou",],
+            },
+            "瞳": {
+                "readings": ["dou", "tou",],
+            },
+            "湿": {
+                "readings": ["shitsu", "syuu",],
+            },
+            "傑": {
+                "readings": ["ketsu",],
+            },
+            "符": {
+                "readings": ["fu",],
+            },
+            "顕": {
+                "readings": ["ken",],
+            },
+            "湖": {
+                "readings": ["ko",],
+            },
+            "籍": {
+                "readings": ["seki",],
+            },
+            "県": {
+                "readings": ["ken",],
+            },
+            "殖": {
+                "readings": ["shoku",],
+            },
+            "脂": {
+                "readings": ["shi",],
+            },
+            "浦": {
+                "readings": ["ho",],
+            },
+            "矛": {
+                "readings": ["mu", "bou",],
+            },
+            "沼": {
+                "readings": ["shou",],
+            },
+            "虎": {
+                "readings": ["ko",],
+            },
+            "排": {
+                "readings": ["hai",],
+            },
+            "叔": {
+                "readings": ["shuku",],
+            },
+            "鉛": {
+                "readings": ["en",],
+            },
+            "宴": {
+                "readings": ["en",],
+            },
+            "鶴": {
+                "readings": ["kaku",],
+            },
+            "狙": {
+                "readings": ["so", "sho",],
+            },
+            "鶏": {
+                "readings": ["kei",],
+            },
+            "蓄": {
+                "readings": ["chiku",],
+            },
+            "餅": {
+                "readings": ["hei", "hyou",],
+            },
+            "誓": {
+                "readings": ["sei",],
+            },
+            "泡": {
+                "readings": ["hou",],
+            },
+            "鎮": {
+                "readings": ["chin",],
+            },
+            "嗅": {
+                "readings": ["kyuu",],
+            },
+            "徐": {
+                "readings": ["jo",],
+            },
+            "炉": {
+                "readings": ["ro",],
+            },
+            "凍": {
+                "readings": ["tou",],
+            },
+            "愁": {
+                "readings": ["syuu",],
+            },
+            "抽": {
+                "readings": ["chuu",],
+            },
+            "鎌": {
+                "readings": ["ren", "ken",],
+            },
+            "酌": {
+                "readings": ["shaku",],
+            },
+            "慄": {
+                "readings": ["ritsu",],
+            },
+            "奔": {
+                "readings": ["hon",],
+            },
+            "偏": {
+                "readings": ["hen",],
+            },
+            "詣": {
+                "readings": ["kei", "gei",],
+            },
+            "侮": {
+                "readings": ["bu",],
+            },
+            "賊": {
+                "readings": ["zoku",],
+            },
+            "慎": {
+                "readings": ["shin",],
+            },
+            "硬": {
+                "readings": ["kou",],
+            },
+            "姫": {
+                "readings": ["ki",],
+            },
+            "孝": {
+                "readings": ["kou", "kyou",],
+            },
+            "唾": {
+                "readings": ["da", "ta",],
+            },
+            "奈": {
+                "readings": ["na", "nai", "dai",],
+            },
+            "妬": {
+                "readings": ["to", "tsu",],
+            },
+            "携": {
+                "readings": ["kei",],
+            },
+            "須": {
+                "readings": ["su", "shu",],
+            },
+            "株": {
+                "readings": ["shu",],
+            },
+            "褒": {
+                "readings": ["hou",],
+            },
+            "貞": {
+                "readings": ["tei",],
+            },
+            "昧": {
+                "readings": ["mai", "bai",],
+            },
+            "妖": {
+                "readings": ["you",],
+            },
+            "陳": {
+                "readings": ["chin",],
+            },
+            "蔽": {
+                "readings": ["hei", "hetsu", "futsu",],
+            },
+            "妨": {
+                "readings": ["bou",],
+            },
+            "郊": {
+                "readings": ["kou",],
+            },
+            "融": {
+                "readings": ["yuu",],
+            },
+            "港": {
+                "readings": ["kou",],
+            },
+            "爽": {
+                "readings": ["sou",],
+            },
+            "擦": {
+                "readings": ["satsu",],
+            },
+            "署": {
+                "readings": ["sho",],
+            },
+            "崇": {
+                "readings": ["suu",],
+            },
+            "朴": {
+                "readings": ["boku",],
+            },
+            "欧": {
+                "readings": ["ou",],
+            },
+            "漏": {
+                "readings": ["rou",],
+            },
+            "嫉": {
+                "readings": ["shitsu",],
+            },
+            "羊": {
+                "readings": ["you",],
+            },
+            "噴": {
+                "readings": ["fun",],
+            },
+            "援": {
+                "readings": ["en",],
+            },
+            "溶": {
+                "readings": ["you",],
+            },
+            "溝": {
+                "readings": ["kou",],
+            },
+            "孔": {
+                "readings": ["kou", "ku",],
+            },
+            "欺": {
+                "readings": ["gi",],
+            },
+            "但": {
+                "readings": ["tan",],
+            },
+            "箸": {
+                "readings": ["cho", "chaku",],
+            },
+            "暁": {
+                "readings": ["gyou", "kyou",],
+            },
+            "享": {
+                "readings": ["kyou", "kou",],
+            },
+            "癒": {
+                "readings": ["yu",],
+            },
+            "療": {
+                "readings": ["ryou",],
+            },
+            "郡": {
+                "readings": ["gun",],
+            },
+            "弓": {
+                "readings": ["kyuu",],
+            },
+            "顎": {
+                "readings": ["gaku",],
+            },
+            "径": {
+                "readings": ["kei",],
+            },
+            "憾": {
+                "readings": ["kan",],
+            },
+            "削": {
+                "readings": ["saku",],
+            },
+            "礎": {
+                "readings": ["so",],
+            },
+            "銃": {
+                "readings": ["juu",],
+            },
+            "餌": {
+                "readings": ["ji", "ni",],
+            },
+            "苛": {
+                "readings": ["ka",],
+            },
+            "狩": {
+                "readings": ["shu",],
+            },
+            "呈": {
+                "readings": ["tei",],
+            },
+            "謎": {
+                "readings": ["mei", "bei",],
+            },
+            "貼": {
+                "readings": ["ten", "chou",],
+            },
+            "駒": {
+                "readings": ["ku",],
+            },
+            "沖": {
+                "readings": ["chuu",],
+            },
+            "虐": {
+                "readings": ["gyaku",],
+            },
+            "慶": {
+                "readings": ["kei",],
+            },
+            "堕": {
+                "readings": ["da",],
+            },
+            "乙": {
+                "readings": ["otsu", "itsu",],
+            },
+            "刈": {
+                "readings": ["gai", "kai",],
+            },
+            "采": {
+                "readings": ["sai",],
+            },
+            "遭": {
+                "readings": ["sou",],
+            },
+            "卵": {
+                "readings": ["ran",],
+            },
+            "剛": {
+                "readings": ["gou",],
+            },
+            "紺": {
+                "readings": ["kon",],
+            },
+            "鍋": {
+                "readings": ["ka",],
+            },
+            "斑": {
+                "readings": ["han",],
+            },
+            "貯": {
+                "readings": ["cho",],
+            },
+            "嵐": {
+                "readings": ["ran",],
+            },
+            "託": {
+                "readings": ["taku",],
+            },
+            "貝": {
+                "readings": ["bai",],
+            },
+            "酸": {
+                "readings": ["san",],
+            },
+            "潤": {
+                "readings": ["jun",],
+            },
+            "刹": {
+                "readings": ["sechi", "setsu", "satsu",],
+            },
+            "逐": {
+                "readings": ["chiku",],
+            },
+            "隆": {
+                "readings": ["ryuu",],
+            },
+            "侵": {
+                "readings": ["shin",],
+            },
+            "峰": {
+                "readings": ["hou",],
+            },
+            "亀": {
+                "readings": ["ki", "kyuu", "kin",],
+            },
+            "均": {
+                "readings": ["kin",],
+            },
+            "塚": {
+                "readings": ["chou",],
+            },
+            "賭": {
+                "readings": ["to",],
+            },
+            "殻": {
+                "readings": ["kaku", "koku", "bai",],
+            },
+            "蚊": {
+                "readings": ["bun",],
+            },
+            "沸": {
+                "readings": ["futsu",],
+            },
+            "穂": {
+                "readings": ["sui",],
+            },
+            "琴": {
+                "readings": ["kin", "gon",],
+            },
+            "棟": {
+                "readings": ["tou",],
+            },
+            "閣": {
+                "readings": ["kaku",],
+            },
+            "喪": {
+                "readings": ["sou",],
+            },
+            "溺": {
+                "readings": ["deki", "jou", "nyou",],
+            },
+            "妄": {
+                "readings": ["mou", "bou",],
+            },
+            "撲": {
+                "readings": ["boku",],
+            },
+            "朽": {
+                "readings": ["kyuu",],
+            },
+            "玩": {
+                "readings": ["gan",],
+            },
+            "諾": {
+                "readings": ["daku",],
+            },
+            "液": {
+                "readings": ["eki",],
+            },
+            "斉": {
+                "readings": ["sei", "sai",],
+            },
+            "囚": {
+                "readings": ["syuu",],
+            },
+            "亜": {
+                "readings": ["a",],
+            },
+            "竜": {
+                "readings": ["ryuu", "ryou", "rou",],
+            },
+            "郵": {
+                "readings": ["yuu",],
+            },
+            "麓": {
+                "readings": ["roku",],
+            },
+            "餓": {
+                "readings": ["ga",],
+            },
+            "謙": {
+                "readings": ["ken",],
+            },
+            "楼": {
+                "readings": ["rou",],
+            },
+            "堤": {
+                "readings": ["tei",],
+            },
+            "戚": {
+                "readings": ["soku", "seki",],
+            },
+            "翁": {
+                "readings": ["ou",],
+            },
+            "斗": {
+                "readings": ["to", "tou",],
+            },
+            "括": {
+                "readings": ["katsu",],
+            },
+            "診": {
+                "readings": ["shin",],
+            },
+            "猟": {
+                "readings": ["ryou",],
+            },
+            "畏": {
+                "readings": ["i",],
+            },
+            "帆": {
+                "readings": ["han",],
+            },
+            "渇": {
+                "readings": ["katsu",],
+            },
+            "寿": {
+                "readings": ["ju", "su", "syuu",],
+            },
+            "偵": {
+                "readings": ["tei",],
+            },
+            "挟": {
+                "readings": ["kyou", "shou",],
+            },
+            "肺": {
+                "readings": ["hai",],
+            },
+            "牙": {
+                "readings": ["ga", "ge",],
+            },
+            "岐": {
+                "readings": ["ki", "gi",],
+            },
+            "藍": {
+                "readings": ["ran",],
+            },
+            "萎": {
+                "readings": ["i",],
+            },
+            "粛": {
+                "readings": ["shuku", "suku",],
+            },
+            "泰": {
+                "readings": ["tai",],
+            },
+            "胃": {
+                "readings": ["i",],
+            },
+            "炊": {
+                "readings": ["sui",],
+            },
+            "滝": {
+                "readings": ["rou", "sou",],
+            },
+            "蛮": {
+                "readings": ["ban",],
+            },
+            "飢": {
+                "readings": ["ki",],
+            },
+            "披": {
+                "readings": ["hi",],
+            },
+            "釜": {
+                "readings": ["fu",],
+            },
+            "喝": {
+                "readings": ["katsu",],
+            },
+            "漬": {
+                "readings": ["shi",],
+            },
+            "航": {
+                "readings": ["kou",],
+            },
+            "謹": {
+                "readings": ["kin",],
+            },
+            "把": {
+                "readings": ["ha", "wa",],
+            },
+            "鍛": {
+                "readings": ["tan",],
+            },
+            "貢": {
+                "readings": ["kou", "ku",],
+            },
+            "酬": {
+                "readings": ["syuu", "shu", "tou",],
+            },
+            "措": {
+                "readings": ["so",],
+            },
+            "伐": {
+                "readings": ["batsu", "hatsu", "ka", "bochi",],
+            },
+            "葛": {
+                "readings": ["katsu", "kachi",],
+            },
+            "択": {
+                "readings": ["taku",],
+            },
+            "暦": {
+                "readings": ["reki", "ryaku",],
+            },
+            "赴": {
+                "readings": ["fu",],
+            },
+            "騎": {
+                "readings": ["ki",],
+            },
+            "僚": {
+                "readings": ["ryou",],
+            },
+            "擁": {
+                "readings": ["you",],
+            },
+            "腸": {
+                "readings": ["chou",],
+            },
+            "晶": {
+                "readings": ["shou",],
+            },
+            "貪": {
+                "readings": ["tan", "don", "ton",],
+            },
+            "赦": {
+                "readings": ["sha",],
+            },
+            "旬": {
+                "readings": ["jun", "syun",],
+            },
+            "耕": {
+                "readings": ["kou",],
+            },
+            "坪": {
+                "readings": ["hei",],
+            },
+            "輸": {
+                "readings": ["yu", "shu",],
+            },
+            "懲": {
+                "readings": ["chou",],
+            },
+            "芳": {
+                "readings": ["hou",],
+            },
+            "吏": {
+                "readings": ["ri",],
+            },
+            "糧": {
+                "readings": ["ryou", "rou",],
+            },
+            "雰": {
+                "readings": ["fun",],
+            },
+            "税": {
+                "readings": ["zei",],
+            },
+            "項": {
+                "readings": ["kou",],
+            },
+            "錦": {
+                "readings": ["kin",],
+            },
+            "挿": {
+                "readings": ["sou",],
+            },
+            "繕": {
+                "readings": ["zen",],
+            },
+            "峠": {
+                "readings": ["touge",],
+            },
+            "秩": {
+                "readings": ["chitsu",],
+            },
+            "邦": {
+                "readings": ["hou",],
+            },
+            "薪": {
+                "readings": ["shin",],
+            },
+            "軟": {
+                "readings": ["nan",],
+            },
+            "契": {
+                "readings": ["kei",],
+            },
+            "償": {
+                "readings": ["shou",],
+            },
+            "芋": {
+                "readings": ["u",],
+            },
+            "啓": {
+                "readings": ["kei",],
+            },
+            "禍": {
+                "readings": ["ka",],
+            },
+            "零": {
+                "readings": ["rei",],
+            },
+            "藩": {
+                "readings": ["han",],
+            },
+            "濯": {
+                "readings": ["taku",],
+            },
+            "冥": {
+                "readings": ["mei", "myou",],
+            },
+            "幣": {
+                "readings": ["hei",],
+            },
+            "捻": {
+                "readings": ["nen", "jou",],
+            },
+            "症": {
+                "readings": ["shou",],
+            },
+            "篤": {
+                "readings": ["toku",],
+            },
+            "豚": {
+                "readings": ["ton",],
+            },
+            "羞": {
+                "readings": ["syuu",],
+            },
+            "蜜": {
+                "readings": ["mitsu", "bitsu",],
+            },
+            "柿": {
+                "readings": ["shi",],
+            },
+            "膨": {
+                "readings": ["bou",],
+            },
+            "募": {
+                "readings": ["bo",],
+            },
+            "詠": {
+                "readings": ["ei",],
+            },
+            "憧": {
+                "readings": ["shou", "tou", "dou",],
+            },
+            "庁": {
+                "readings": ["chou", "tei",],
+            },
+            "畔": {
+                "readings": ["han",],
+            },
+            "扶": {
+                "readings": ["fu",],
+            },
+            "廷": {
+                "readings": ["tei",],
+            },
+            "禅": {
+                "readings": ["zen", "sen",],
+            },
+            "倫": {
+                "readings": ["rin",],
+            },
+            "挑": {
+                "readings": ["chou",],
+            },
+            "錠": {
+                "readings": ["jou",],
+            },
+            "軸": {
+                "readings": ["jiku",],
+            },
+            "爵": {
+                "readings": ["shaku",],
+            },
+            "副": {
+                "readings": ["fuku",],
+            },
+            "弊": {
+                "readings": ["hei",],
+            },
+            "謡": {
+                "readings": ["you",],
+            },
+            "髄": {
+                "readings": ["zui",],
+            },
+            "糖": {
+                "readings": ["tou",],
+            },
+            "蜂": {
+                "readings": ["hou",],
+            },
+            "叙": {
+                "readings": ["jo",],
+            },
+            "佳": {
+                "readings": ["ka",],
+            },
+            "廉": {
+                "readings": ["ren",],
+            },
+            "盟": {
+                "readings": ["mei",],
+            },
+            "誕": {
+                "readings": ["tan",],
+            },
+            "凹": {
+                "readings": ["ou",],
+            },
+            "宰": {
+                "readings": ["sai",],
+            },
+            "肖": {
+                "readings": ["shou",],
+            },
+            "婿": {
+                "readings": ["sei",],
+            },
+            "賜": {
+                "readings": ["shi",],
+            },
+            "秒": {
+                "readings": ["byou",],
+            },
+            "淫": {
+                "readings": ["in",],
+            },
+            "燥": {
+                "readings": ["sou",],
+            },
+            "桑": {
+                "readings": ["sou",],
+            },
+            "兆": {
+                "readings": ["chou",],
+            },
+            "億": {
+                "readings": ["oku",],
+            },
+            "撮": {
+                "readings": ["satsu",],
+            },
+            "侯": {
+                "readings": ["kou",],
+            },
+            "憲": {
+                "readings": ["ken",],
+            },
+            "傲": {
+                "readings": ["gou",],
+            },
+            "摂": {
+                "readings": ["setsu", "shou",],
+            },
+            "克": {
+                "readings": ["koku",],
+            },
+            "尼": {
+                "readings": ["ni",],
+            },
+            "遜": {
+                "readings": ["son",],
+            },
+            "藻": {
+                "readings": ["sou",],
+            },
+            "腫": {
+                "readings": ["shu", "shou",],
+            },
+            "煎": {
+                "readings": ["sen",],
+            },
+            "脊": {
+                "readings": ["seki",],
+            },
+            "漆": {
+                "readings": ["shitsu",],
+            },
+            "升": {
+                "readings": ["shou",],
+            },
+            "斥": {
+                "readings": ["seki",],
+            },
+            "墜": {
+                "readings": ["tsui",],
+            },
+            "寡": {
+                "readings": ["ka",],
+            },
+            "腎": {
+                "readings": ["jin",],
+            },
+            "隷": {
+                "readings": ["rei",],
+            },
+            "擬": {
+                "readings": ["gi",],
+            },
+            "胞": {
+                "readings": ["hou",],
+            },
+            "薫": {
+                "readings": ["kun",],
+            },
+            "倣": {
+                "readings": ["hou",],
+            },
+            "韻": {
+                "readings": ["in",],
+            },
+            "妥": {
+                "readings": ["da",],
+            },
+            "苗": {
+                "readings": ["byou", "myou",],
+            },
+            "核": {
+                "readings": ["kaku",],
+            },
+            "曖": {
+                "readings": ["ai",],
+            },
+            "岳": {
+                "readings": ["gaku",],
+            },
+            "璃": {
+                "readings": ["ri",],
+            },
+            "嚇": {
+                "readings": ["kaku",],
+            },
+            "濫": {
+                "readings": ["ran",],
+            },
+            "粘": {
+                "readings": ["nen",],
+            },
+            "拓": {
+                "readings": ["taku",],
+            },
+            "遷": {
+                "readings": ["sen",],
+            },
+            "胎": {
+                "readings": ["tai",],
+            },
+            "侶": {
+                "readings": ["ryo", "ro",],
+            },
+            "洪": {
+                "readings": ["kou",],
+            },
+            "棺": {
+                "readings": ["kan",],
+            },
+            "湾": {
+                "readings": ["wan",],
+            },
+            "肘": {
+                "readings": ["chuu",],
+            },
+            "惰": {
+                "readings": ["da",],
+            },
+            "郭": {
+                "readings": ["kaku",],
+            },
+            "俵": {
+                "readings": ["hyou",],
+            },
+            "凶": {
+                "readings": ["kyou",],
+            },
+            "碑": {
+                "readings": ["hi",],
+            },
+            "柵": {
+                "readings": ["saku", "san",],
+            },
+            "繊": {
+                "readings": ["sen",],
+            },
+            "殴": {
+                "readings": ["ou",],
+            },
+            "勃": {
+                "readings": ["botsu", "hotsu",],
+            },
+            "抹": {
+                "readings": ["matsu",],
+            },
+            "俊": {
+                "readings": ["syun",],
+            },
+            "膜": {
+                "readings": ["maku",],
+            },
+            "挫": {
+                "readings": ["za", "sa",],
+            },
+            "桟": {
+                "readings": ["san", "sen",],
+            },
+            "虹": {
+                "readings": ["kou",],
+            },
+            "艦": {
+                "readings": ["kan",],
+            },
+            "毀": {
+                "readings": ["ki",],
+            },
+            "析": {
+                "readings": ["seki",],
+            },
+            "累": {
+                "readings": ["rui",],
+            },
+            "渓": {
+                "readings": ["kei",],
+            },
+            "剖": {
+                "readings": ["bou",],
+            },
+            "譜": {
+                "readings": ["fu",],
+            },
+            "訂": {
+                "readings": ["tei",],
+            },
+            "伎": {
+                "readings": ["gi", "ki",],
+            },
+            "恭": {
+                "readings": ["kyou",],
+            },
+            "梨": {
+                "readings": ["ri",],
+            },
+            "剤": {
+                "readings": ["zai", "sui", "sei",],
+            },
+            "憩": {
+                "readings": ["kei",],
+            },
+            "穫": {
+                "readings": ["kaku",],
+            },
+            "唆": {
+                "readings": ["sa",],
+            },
+            "諧": {
+                "readings": ["kai",],
+            },
+            "鉱": {
+                "readings": ["kou",],
+            },
+            "騰": {
+                "readings": ["tou",],
+            },
+            "堆": {
+                "readings": ["tai", "tsui",],
+            },
+            "緻": {
+                "readings": ["chi",],
+            },
+            "穀": {
+                "readings": ["koku",],
+            },
+            "碁": {
+                "readings": ["go",],
+            },
+            "褐": {
+                "readings": ["katsu",],
+            },
+            "諭": {
+                "readings": ["yu",],
+            },
+            "肢": {
+                "readings": ["shi",],
+            },
+            "衡": {
+                "readings": ["kou",],
+            },
+            "軌": {
+                "readings": ["ki",],
+            },
+            "昆": {
+                "readings": ["kon",],
+            },
+            "綻": {
+                "readings": ["tan",],
+            },
+            "簿": {
+                "readings": ["bo",],
+            },
+            "娯": {
+                "readings": ["go",],
+            },
+            "磁": {
+                "readings": ["ji",],
+            },
+            "迅": {
+                "readings": ["jin",],
+            },
+            "需": {
+                "readings": ["ju",],
+            },
+            "睦": {
+                "readings": ["boku", "moku",],
+            },
+            "卸": {
+                "readings": ["sha",],
+            },
+            "茎": {
+                "readings": ["kei", "kyou",],
+            },
+            "逝": {
+                "readings": ["sei",],
+            },
+            "峡": {
+                "readings": ["kyou", "kou",],
+            },
+            "陵": {
+                "readings": ["ryou",],
+            },
+            "枠": {
+                "readings": ["waku",],
+            },
+            "尉": {
+                "readings": ["i", "jou",],
+            },
+            "閲": {
+                "readings": ["etsu",],
+            },
+            "購": {
+                "readings": ["kou",],
+            },
+            "庶": {
+                "readings": ["sho",],
+            },
+            "券": {
+                "readings": ["ken",],
+            },
+            "冶": {
+                "readings": ["ya",],
+            },
+            "瑠": {
+                "readings": ["ru", "ryuu",],
+            },
+            "搾": {
+                "readings": ["saku",],
+            },
+            "雌": {
+                "readings": ["shi",],
+            },
+            "阻": {
+                "readings": ["so",],
+            },
+            "薦": {
+                "readings": ["sen",],
+            },
+            "淑": {
+                "readings": ["shuku",],
+            },
+            "喩": {
+                "readings": ["yu",],
+            },
+            "匿": {
+                "readings": ["toku",],
+            },
+            "栽": {
+                "readings": ["sai",],
+            },
+            "錬": {
+                "readings": ["ren",],
+            },
+            "旺": {
+                "readings": ["ou", "kyou", "gou",],
+            },
+            "媒": {
+                "readings": ["bai",],
+            },
+            "儒": {
+                "readings": ["ju",],
+            },
+            "賦": {
+                "readings": ["fu", "bu",],
+            },
+            "桁": {
+                "readings": ["kou",],
+            },
+            "辣": {
+                "readings": ["ratsu",],
+            },
+            "醸": {
+                "readings": ["jou",],
+            },
+            "祥": {
+                "readings": ["shou",],
+            },
+            "罷": {
+                "readings": ["hi",],
+            },
+            "弔": {
+                "readings": ["chou",],
+            },
+            "培": {
+                "readings": ["bai",],
+            },
+            "奨": {
+                "readings": ["shou", "sou",],
+            },
+            "駐": {
+                "readings": ["chuu",],
+            },
+            "詐": {
+                "readings": ["sa",],
+            },
+            "后": {
+                "readings": ["kou", "go",],
+            },
+            "椎": {
+                "readings": ["tsui", "sui",],
+            },
+            "憬": {
+                "readings": ["kei",],
+            },
+            "衷": {
+                "readings": ["chuu",],
+            },
+            "窃": {
+                "readings": ["setsu",],
+            },
+            "庸": {
+                "readings": ["you",],
+            },
+            "鋼": {
+                "readings": ["kou",],
+            },
+            "寮": {
+                "readings": ["ryou",],
+            },
+            "勲": {
+                "readings": ["kun",],
+            },
+            "槽": {
+                "readings": ["sou",],
+            },
+            "恒": {
+                "readings": ["kou",],
+            },
+            "班": {
+                "readings": ["han",],
+            },
+            "搬": {
+                "readings": ["han",],
+            },
+            "厘": {
+                "readings": ["rin",],
+            },
+            "舗": {
+                "readings": ["ho",],
+            },
+            "虜": {
+                "readings": ["ryo", "ro",],
+            },
+            "圏": {
+                "readings": ["ken",],
+            },
+            "棋": {
+                "readings": ["ki",],
+            },
+            "剰": {
+                "readings": ["jou",],
+            },
+            "惧": {
+                "readings": ["ku", "gu",],
+            },
+            "勾": {
+                "readings": ["kou", "ku",],
+            },
+            "弦": {
+                "readings": ["gen",],
+            },
+            "凸": {
+                "readings": ["totsu",],
+            },
+            "鋳": {
+                "readings": ["chuu", "i", "shu", "syuu",],
+            },
+            "酢": {
+                "readings": ["saku",],
+            },
+            "岬": {
+                "readings": ["kou",],
+            },
+            "緯": {
+                "readings": ["i",],
+            },
+            "抄": {
+                "readings": ["shou",],
+            },
+            "串": {
+                "readings": ["kan", "ken", "sen",],
+            },
+            "茨": {
+                "readings": ["shi", "ji",],
+            },
+            "鯨": {
+                "readings": ["gei",],
+            },
+            "隻": {
+                "readings": ["seki",],
+            },
+            "践": {
+                "readings": ["sen",],
+            },
+            "債": {
+                "readings": ["sai",],
+            },
+            "舶": {
+                "readings": ["haku",],
+            },
+            "遡": {
+                "readings": ["so", "saku",],
+            },
+            "滋": {
+                "readings": ["ji", "shi",],
+            },
+            "矯": {
+                "readings": ["kyou",],
+            },
+            "殉": {
+                "readings": ["jun",],
+            },
+            "窒": {
+                "readings": ["chitsu",],
+            },
+            "勅": {
+                "readings": ["choku",],
+            },
+            "曹": {
+                "readings": ["sou", "zou",],
+            },
+            "臼": {
+                "readings": ["kyuu", "gu",],
+            },
+            "蚕": {
+                "readings": ["san", "ten",],
+            },
+            "潟": {
+                "readings": ["seki",],
+            },
+            "虞": {
+                "readings": ["gu",],
+            },
+            "梗": {
+                "readings": ["kou", "kyou",],
+            },
+            "糾": {
+                "readings": ["kyuu",],
+            },
+            "栓": {
+                "readings": ["sen",],
+            },
+            "舷": {
+                "readings": ["gen",],
+            },
+            "菌": {
+                "readings": ["kin",],
+            },
+            "貿": {
+                "readings": ["bou",],
+            },
+            "循": {
+                "readings": ["jun",],
+            },
+            "妊": {
+                "readings": ["nin", "jin",],
+            },
+            "娠": {
+                "readings": ["shin",],
+            },
+            "捗": {
+                "readings": ["choku", "ho",],
+            },
+            "汎": {
+                "readings": ["han", "bu", "fuu", "hou", "hon",],
+            },
+            "塾": {
+                "readings": ["jyuku",],
+            },
+            "覇": {
+                "readings": ["ha", "haku",],
+            },
+            "賄": {
+                "readings": ["wai",],
+            },
+            "硫": {
+                "readings": ["ryuu",],
+            },
+            "倹": {
+                "readings": ["ken",],
+            },
+            "悼": {
+                "readings": ["tou",],
+            },
+            "賓": {
+                "readings": ["hin",],
+            },
+            "撤": {
+                "readings": ["tetsu",],
+            },
+            "疫": {
+                "readings": ["eki", "yaku",],
+            },
+            "尿": {
+                "readings": ["nyou",],
+            },
+            "芯": {
+                "readings": ["shin",],
+            },
+            "妃": {
+                "readings": ["hi",],
+            },
+            "肪": {
+                "readings": ["bou",],
+            },
+            "耗": {
+                "readings": ["mou", "kou",],
+            },
+            "蛍": {
+                "readings": ["kei",],
+            },
+            "嗣": {
+                "readings": ["shi",],
+            },
+            "坑": {
+                "readings": ["kou",],
+            },
+            "逮": {
+                "readings": ["tai",],
+            },
+            "畝": {
+                "readings": ["bou", "ho", "mo", "mu",],
+            },
+            "該": {
+                "readings": ["gai",],
+            },
+            "缶": {
+                "readings": ["kan",],
+            },
+            "陛": {
+                "readings": ["hei",],
+            },
+            "拷": {
+                "readings": ["gou",],
+            },
+            "璧": {
+                "readings": ["heki",],
+            },
+            "屯": {
+                "readings": ["ton",],
+            },
+            "弧": {
+                "readings": ["ko",],
+            },
+            "嘱": {
+                "readings": ["shoku",],
+            },
+            "紡": {
+                "readings": ["bou",],
+            },
+            "閥": {
+                "readings": ["batsu",],
+            },
+            "訟": {
+                "readings": ["shou",],
+            },
+            "拐": {
+                "readings": ["kai",],
+            },
+            "氾": {
+                "readings": ["han",],
+            },
+            "墳": {
+                "readings": ["fun",],
+            },
+            "販": {
+                "readings": ["han",],
+            },
+            "枢": {
+                "readings": ["suu", "shu",],
+            },
+            "恣": {
+                "readings": ["shi",],
+            },
+            "票": {
+                "readings": ["hyou",],
+            },
+            "拉": {
+                "readings": ["ratsu", "ra", "rou",],
+            },
+            "韓": {
+                "readings": ["kan",],
+            },
+            "摯": {
+                "readings": ["shi",],
+            },
+            "俸": {
+                "readings": ["hou",],
+            },
+            "艇": {
+                "readings": ["tei",],
+            },
+            "泌": {
+                "readings": ["hitsu", "hi",],
+            },
+            "痢": {
+                "readings": ["ri",],
+            },
+            "麺": {
+                "readings": ["men", "ben",],
+            },
+            "踪": {
+                "readings": ["sou", "shou",],
+            },
+            "箋": {
+                "readings": ["sen",],
+            },
+            "頒": {
+                "readings": ["han",],
+            },
+            "嫡": {
+                "readings": ["chaku", "teki",],
+            },
+            "丙": {
+                "readings": ["hei",],
+            },
+            "謁": {
+                "readings": ["etsu",],
+            },
+            "曽": {
+                "readings": ["sou", "so", "zou",],
+            },
+            "墾": {
+                "readings": ["kon",],
+            },
+            "姻": {
+                "readings": ["in",],
+            },
+            "轄": {
+                "readings": ["katsu",],
+            },
+            "帥": {
+                "readings": ["sui",],
+            },
+            "丼": {
+                "readings": ["ton", "tan", "shou", "sei",],
+            },
+            "壱": {
+                "readings": ["ichi", "itsu",],
+            },
+            "礁": {
+                "readings": ["shou",],
+            },
+            "酵": {
+                "readings": ["kou",],
+            },
+            "彙": {
+                "readings": ["i",],
+            },
+            "陪": {
+                "readings": ["bai",],
+            },
+            "酎": {
+                "readings": ["chuu", "chu",],
+            },
+            "彰": {
+                "readings": ["shou",],
+            },
+            "壌": {
+                "readings": ["jou",],
+            },
+            "塁": {
+                "readings": ["rui", "rai", "sui",],
+            },
+            "斤": {
+                "readings": ["kin",],
+            },
+            "租": {
+                "readings": ["so",],
+            },
+            "媛": {
+                "readings": ["en",],
+            },
+            "痘": {
+                "readings": ["tou",],
+            },
+            "沃": {
+                "readings": ["you", "yoku", "oku",],
+            },
+            "詔": {
+                "readings": ["shou",],
+            },
+            "畿": {
+                "readings": ["ki",],
+            },
+            "阜": {
+                "readings": ["fu", "fuu",],
+            },
+            "繭": {
+                "readings": ["ken",],
+            },
+            "款": {
+                "readings": ["kan",],
+            },
+            "弐": {
+                "readings": ["ni", "ji",],
+            },
+            "腺": {
+                "readings": ["sen",],
+            },
+            "遵": {
+                "readings": ["jun",],
+            },
+            "賂": {
+                "readings": ["ro",],
+            },
+            "栃": {
+                "readings": ["tochi",],
+            },
+            "埼": {
+                "readings": ["ki",],
+            },
+            "謄": {
+                "readings": ["tou",],
+            },
+            "訃": {
+                "readings": ["fu",],
+            },
+            "賠": {
+                "readings": ["bai",],
+            },
+            "逓": {
+                "readings": ["tei",],
+            },
+            "塑": {
+                "readings": ["so",],
+            },
+            "楷": {
+                "readings": ["kai",],
+            },
+            "窯": {
+                "readings": ["you",],
+            },
+            "哺": {
+                "readings": ["ho",],
+            },
+            "諮": {
+                "readings": ["shi",],
+            },
+            "瘍": {
+                "readings": ["you",],
+            },
+            "酪": {
+                "readings": ["raku",],
+            },
+            "准": {
+                "readings": ["jun",],
+            },
+            "迭": {
+                "readings": ["tetsu",],
+            },
+            "搭": {
+                "readings": ["tou",],
+            },
+            "朕": {
+                "readings": ["chin",],
+            },
+            "祉": {
+                "readings": ["shi",],
+            },
+            "劾": {
+                "readings": ["gai",],
+            },
+            "錮": {
+                "readings": ["ko",],
+            },
+            "璽": {
+                "readings": ["ji",],
+            }
+        }
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+
+
+        function createTest() {
+            document.getElementById('options').style.display = 'none';
+            document.getElementById('startButtonWrapper').style.display = 'none';
+            document.getElementById('test').style.visibility = 'visible';
+
+            const kanjiFrequencyChosen = document.getElementById('frequencyChosen').value;
+            var kanjiEntries = Object.keys(kanjiDict);
+
+            if (kanjiFrequencyChosen == 2000) {
+                kanjiEntries = kanjiEntries.slice(kanjiFrequencyChosen, +kanjiFrequencyChosen+134);
+            } else {
+                kanjiEntries = kanjiEntries.slice(kanjiFrequencyChosen, +kanjiFrequencyChosen+100);
+            }
+
+            kanjiEntries = shuffle(kanjiEntries);
+            for (let i = 0; i < kanjiEntries.length; i++) {
+
+                var kanjiDiv = document.createElement('div');
+                kanjiDiv.setAttribute('id', i);
+                kanjiDiv.setAttribute('class', 'kanjiDiv');
+                kanjiDiv.innerText = kanjiEntries[i];
+
+                var input = document.createElement('input');
+                input.setAttribute('class', 'input');
+                kanjiDiv.appendChild(input);
+
+                document.getElementById('kanjiTrainingArea').appendChild(kanjiDiv);
+            }
+
+            document.getElementsByClassName('input')[0].focus();
+        }
+
+
+        function showResults() {
+            document.getElementById('test').style.display = 'none';
+            document.getElementById('testResults').style.display = 'block';
+
+            const inputs = document.getElementsByClassName('input');
+            const resultsTableContent = {};
+
+            var correctAnswersAmount = 0;
+            var wrongAnswersAmount = 0;
+
+            const kanjiDivs = document.getElementsByClassName('kanjiDiv');
+
+            for (let i = 0; i < inputs.length; i++) {
+                const problemKanji = kanjiDivs[i].innerText;
+                const readings = kanjiDict[problemKanji]['readings'];
+                const answer = inputs[i].value;
+
+                resultsTableContent[i] = { 'kanji': problemKanji, 'readings': readings, 'answer': answer };
+
+                if (resultsTableContent[i].readings.includes(answer)) {
+                    correctAnswersAmount++;
+                } else {
+                    wrongAnswersAmount++;
+                }
+            }
+
+
+            document.getElementById('wrongAnswersAmount').innerHTML = wrongAnswersAmount;
+            document.getElementById('accuracyRate').innerHTML = ((correctAnswersAmount * inputs.length) / 100) + ' %';
+
+            for (let i in resultsTableContent) {
+                const FAILURE_RED = '#F08080';
+                const SUCCESS_GREEN = '#90EE90';
+
+                const row = document.createElement('tr');
+
+                var backgroundColor;
+                var fontColor = 'black';
+                if (resultsTableContent[i]['readings'].includes(resultsTableContent[i]['answer'])) {
+                    backgroundColor = SUCCESS_GREEN;
+                } else {
+                    backgroundColor = FAILURE_RED;
+                    fontColor = 'white';
+                }
+
+                let rowHTML = '';
+                rowHTML += '<td>' + resultsTableContent[i]['kanji'] + '</td>';
+                rowHTML += '<td>' + resultsTableContent[i]['readings'] + '</td>';
+                rowHTML += '<td>' + resultsTableContent[i]['answer'] + '</td>';
+
+                row.innerHTML = rowHTML;
+                row.style.backgroundColor = backgroundColor;
+                row.style.color = fontColor;
+
+                document.getElementById('resultsTable').appendChild(row);
+            }
+
+
+        }
+    </script>
+</head>
+
+<body>
+
+    <div>
+        <button id="exit" style="height:5px;width:5px;" type="button" class="btn-close mt-4" aria-label="Close" onclick="location.href='{{ url_for('paralogia.index') }}'"></button>
+    </div>
+    <div id="options" class="center">
+        <p>
+            This test will evaluate your kanji proficiency. Fill in the boxes with a onyomi reading and click "Submit
+            Test" to check your
+            results. In the rare occasion a kanji does not have a onyomi reading, its kunyomi reading will be accepted
+            instead.
+            Pressing the space key jumps to the next kanji automatically.
+        </p>
+        <p>
+            Attention! You must type your answers in romaji.
+        </p>
+        <div>
+            <span>Frequency rate:</span>
+            <select id="frequencyChosen" name="frequency">
+                <option value="0">1-100 most common kanji</option>
+                <option value="100">100-200 most common kanji</option>
+                <option value="200">200-300 most common kanji</option>
+                <option value="300">300-400 most common kanji</option>
+                <option value="400">400-500 most common kanji</option>
+                <option value="500">500-600 most common kanji</option>
+                <option value="600">600-700 most common kanji</option>
+                <option value="700">700-800 most common kanji</option>
+                <option value="800">800-900 most common kanji</option>
+                <option value="900">900-1000 most common kanji</option>
+                <option value="1000">1000-1100 most common kanji</option>
+                <option value="1100">1100-1200 most common kanji</option>
+                <option value="1200">1200-1300 most common kanji</option>
+                <option value="1300">1300-1400 most common kanji</option>
+                <option value="1400">1400-1500 most common kanji</option>
+                <option value="1500">1500-1600 most common kanji</option>
+                <option value="1600">1600-1700 most common kanji</option>
+                <option value="1700">1700-1800 most common kanji</option>
+                <option value="1800">1800-1900 most common kanji</option>
+                <option value="1900">1900-2000 most common kanji</option>
+                <option value="2000">2000-2136 most common kanji</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="startButtonWrapper" class="noSelect" onclick=createTest()>
+        <button id="startButton">START</button>
+    </div>
+
+
+
+    <div id="test" style="visibility: hidden;">
+
+        <div id="testTitle">
+            <h3>
+                漢字能力試験 (Kanji Proficiency Test)
+            </h3>
+            <hr>
+
+        </div>
+
+
+        <div id="kanjiTrainingArea"></div>
+
+        <div onclick=showResults() id="resultButtonWrapper" class="noSelect">
+            <button id="resultButton">SUBMIT ANSWERS</button>
+        </div>
+
+    </div>
+
+
+    <div id="testResults" style="display:none">
+        Accuracy: <span id="accuracyRate"></span><br>
+        Mistakes: <span id="wrongAnswersAmount"></span><br>
+
+        <div id="resultsTableWrapper">
+
+            <table id="resultsTable" class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Kanji</th>
+                        <th scope="col">Acceptable Answers</th>
+                        <th scope="col">Your Answer</th>
+                    </tr>
+                </thead>
+            </table>
+
+        </div>
+
+        <button id="againButton" class="noSelect" onclick="window.location.href=window.location.href">RETAKE
+            TEST</button>
+    </div>
+
+
+    <script>
+
+
+
+        document.getElementById('kanjiTrainingArea').addEventListener('keydown', function (pressedKey) {
+            if (pressedKey.key == ' ' || pressedKey.keycode == 32 || pressedKey.code == "Space") {
+                pressedKey.preventDefault();
+                const focusedInput = document.activeElement;
+
+                const INPUT = 1;
+                if (focusedInput.parentNode.nextElementSibling) {
+                    const nextInput = focusedInput.parentNode.nextElementSibling.childNodes[INPUT];
+                    nextInput.focus();
+                } else {
+                    document.getElementById('resultButton').focus();
+                }
+            }
+        });
+
+        var kanjiEntries = Object.keys(kanjiDict);
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+click==8.0.3
+Flask==2.2.3
+Flask_WTF==1.1.1
+jamdict==0.1a11.post2
+pytest==7.2.1
+SudachiPy==0.6.7
+Werkzeug==2.2.3

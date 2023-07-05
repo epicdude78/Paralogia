@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito">
+  <title>Memorizer</title>
+
+  <style>
+    #leaveButton,
+    #mainButton {
+      padding: 15px 25px;
+      font-size: 24px;
+      text-align: center;
+      cursor: pointer;
+      outline: none;
+      color: black;
+      background-color: rgb(219, 219, 219);
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 9px #999;
+    }
+
+    #tryAgainButton,
+    #rememberedButton {
+      padding: 15px 25px;
+      font-size: 24px;
+      text-align: center;
+      cursor: pointer;
+      outline: none;
+      color: #fff;
+      background-color: #04AA6D;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 9px #999;
+      width: 250px;
+    }
+
+    #tryAgainButton {
+      background-color: #c3420b;
+    }
+
+
+    #leaveButton:active,
+    #mainButton:active,
+    #tryAgainButton:active,
+    #rememberedButton:active {
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+    #buttonWrapper {
+      text-align: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      margin-bottom: 10%;
+    }
+
+    #mainButton {
+      width: 250px;
+    }
+
+    #rateButtonsWrapper {
+      display: inline-block;
+      visibility: hidden;
+      margin-bottom: 20px;
+    }
+
+    #example,
+    #reading,
+    #translation,
+    #word {
+      text-align: center;
+      font-size: 30px;
+    }
+
+    #problem {
+      margin: 10vh 0;
+    }
+
+    #example {
+      margin-top: 5vh;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    body {
+      font-family: Nunito, sans-serif;
+    }
+
+    #translateIcon {
+      cursor: pointer;
+    }
+
+    #congratulationsMessage {
+      display: none;
+      font-size: xx-large;
+      text-align: center;
+      margin-top:40px;
+    }
+
+    #exit {
+      font-size: large;
+      float: right;
+      text-align: center;
+      cursor: pointer;
+      margin-right: 40px;
+      margin-top: 20px;
+    }
+  </style>
+  <script>
+    const deck = {{ deck| safe }};
+
+    for (word in deck['words']) {
+      deck['words'][word]['neverSeen'] = true
+    }
+
+    const words = Object.keys(deck['words'])
+    console.log(words);
+
+
+
+
+    function congratulate() {
+      hideSolution();
+      document.getElementById('counter').innerHTML = '0';
+      document.getElementById('problem').style.display = 'none';
+      document.getElementById('buttonWrapper').style.visibility = 'hidden';
+      document.getElementById('rateButtonsWrapper').style.visibility = 'hidden';
+      document.getElementById('congratulationsMessage').style.display = 'block';
+    }
+
+    function updateScreen() {
+      document.getElementById('word').innerHTML = words[0];
+      document.getElementById('reading').innerHTML = deck['words'][words[0]]['reading'];
+      document.getElementById('translation').innerHTML = deck['words'][words[0]]['translation'];
+      document.getElementById('example').innerHTML = deck['words'][words[0]]['example'];
+      document.getElementById('counter').innerHTML = words.length;
+
+      console.log(deck['words'][words[0]]['neverSeen'])
+      if (deck['words'][words[0]]['neverSeen']) {
+        showSolution();
+        document.getElementById('mainButton').innerHTML = 'Learn this word';
+      } else {
+        hideSolution();
+        document.getElementById('mainButton').innerHTML = 'Show the answer';
+      }
+
+      document.getElementById('mainButton').focus();
+    }
+
+    function discardWord() {
+      words.shift();
+      updateScreen();
+
+      if (deck['words'][words[0]]['neverSeen']) {
+        document.getElementById('mainButton').innerHTML = 'Learn this word';
+      } else {
+        document.getElementById('mainButton').innerHTML = 'Show answer';
+      }
+    }
+
+    function arraymove(arr, fromIndex, toIndex) {
+      var element = arr[fromIndex];
+      arr.splice(fromIndex, 1);
+      arr.splice(toIndex, 0, element);
+    }
+
+    function putWordBack() {
+      deck['words'][words[0]]['neverSeen'] = false;
+      arraySize = words.length;
+
+      if (arraySize > 11) {
+        arraymove(words, 0, 10);
+      } else {
+        arraymove(words, 0, arraySize);
+      }
+
+      updateScreen();
+    }
+
+    function showSolution() {
+      var solution = document.getElementById('solution');
+      var rememberedButton = document.getElementById('rememberedButton');
+      var wordPlaceholder = document.getElementById('wordPlaceholder');
+
+      solution.style.visibility = 'visible';
+      wordPlaceholder.style.display = 'none';
+
+      rememberedButton.focus();
+    }
+
+    function hideSolution() {
+      document.getElementById('solution').style.visibility = 'hidden';
+      document.getElementById('wordPlaceholder').style.display = 'block';
+
+      rememberedButton.focus();
+    }
+
+    function processTryAgainButton() {
+      putWordBack();
+      document.getElementById('rateButtonsWrapper').style.visibility = 'hidden';
+      updateScreen();
+    }
+
+    function processRememberedButton() {
+      try {
+
+        discardWord();
+        document.getElementById('rateButtonsWrapper').style.visibility = 'hidden';
+
+      } catch (err) {
+        if (err instanceof TypeError) {
+          if (words.length === 0) {
+            congratulate();
+          }
+        }
+      }
+
+      updateScreen();
+
+    }
+
+    function processMainButton() {
+
+      if (deck['words'][words[0]]['neverSeen']) {
+        putWordBack();
+
+        if (deck['words'][words[0]]['neverSeen']) {
+          showSolution();
+          document.getElementById('mainButton').innerHTML = 'Learn this word';
+        } else {
+          hideSolution();
+          document.getElementById('mainButton').innerHTML = 'Show the answer';
+        }
+
+      } else {
+        showSolution();
+        document.getElementById('rateButtonsWrapper').style.visibility = 'visible';
+        rememberedButton.focus();
+      }
+    }
+
+  </script>
+
+
+<body>
+
+
+
+  <div id="navbar">
+    <h2 id="deckName" style="display:inline"></h2>
+    <div id="exit" onclick="location.href='{{ url_for('paralogia.index') }}'">X</div>
+  </div>
+
+  <div id="wordLeftCount" style="margin-top:10px;">
+    words remaining: <span id="counter">counter</span>
+  </div>
+
+  <div id="congratulationsMessage">Congrats!<br>
+    You have finished your words.<br>
+    Test your memory again some other time.
+    <div>
+      <button class="button" id="leaveButton" autofocus onclick="location.href='{{ url_for('paralogia.index') }}'"
+        style="margin-top:125px">Return to
+        dashboard</button>
+    </div>
+  </div>
+
+  <div id="problem">
+    <div id="word">
+      ENGLISH_WORD
+    </div>
+    <div id="wordPlaceholder" style="text-align:center;font-size:larger">
+      ?
+    </div>
+    <span id="solution" style="visibility:hidden">
+      <div id="reading">
+        READING
+      </div>
+      <div id="translation">
+        TRANSLATION
+      </div>
+      <div id="example">
+        EXAMPLE
+      </div>
+    </span>
+  </div>
+
+  <div id="buttonWrapper">
+    <div id="rateButtonsWrapper">
+      <button class="button" id="tryAgainButton" onclick="processTryAgainButton()">👎 Try again later</button>
+      <button class="button" id="rememberedButton" onclick="processRememberedButton()">👍 I remembered</button>
+    </div>
+    <div>
+      <button class="button" id="mainButton" autofocus onclick="processMainButton()"></button>
+    </div>
+  </div>
+  </div>
+
+
+
+
+  <script>
+    document.getElementById('deckName').innerHTML = deck['deckName'];
+
+
+    updateScreen();
+
+
+
+
+    window.onmouseup = function (event) {
+      var rememberedButton = document.getElementById('rememberedButton');
+      var mainButton = document.getElementById('mainButton');
+      var rateButtonsWrapper = document.getElementById('rateButtonsWrapper');
+
+      if (rateButtonsWrapper.style.visibility === 'visible') {
+        rememberedButton.focus();
+      } else {
+        mainButton.focus();
+      }
+
+    } 
+  </script>
+
+</body>
+
+</html>

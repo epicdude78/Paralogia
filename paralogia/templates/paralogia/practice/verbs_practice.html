@@ -1,0 +1,224 @@
+{% extends 'paralogia/practice/base.html' %}
+
+{% block generateProblem %}
+randomVerb = randChoice(Object.keys(dict));
+
+problem = randChoice(Object.keys(dict[randomVerb]));
+
+document.getElementById('verb').innerHTML = randomVerb;
+document.getElementById('problem').innerHTML = problem;
+
+solution = dict[randomVerb][problem];
+console.log(solution);
+{% endblock %}
+
+{% block body %}
+<div id="verb">VERB</div>
+
+<div id="problem">CONJUGATION</div>
+
+<div id="conjugationBox">
+
+    <input id="input" autofocus placeholder="活用">
+
+</div>
+{% endblock %}
+
+
+
+{% block imageLink %}{{ url_for('static',filename='images/verbs_cheatsheet.png')}}{% endblock %}
+
+{% block afterBodyScript %}
+
+dict = {
+    "au": {
+        "polite": "aimasu",
+        "past": "atta",
+        "past polite": "aimashita",
+        "te-form": "atte",
+        "potential": "aeru",
+        "passive": "awareru",
+        "causative": "awaseru",
+        "causative passive": "awaserareru",
+        "imperative": "ae",
+        "negative": "awanai",
+        "polite negative": "aimasen",
+        "past negative": "awanakatta",
+        "past polite negative": "aimasendeshita",
+        "te-form negative": "awanakute",
+        "potential negative": "aenai",
+        "passive negative": "awarenai",
+        "causative negative": "awasenai",
+        "causative passive negative": "awaserarenai",
+        "imperative negative": "auna"
+    },
+    "matsu":{
+        "polite": "machimasu",
+        "past": "matta",
+        "past polite": "machimashita",
+        "te-form": "matte",
+        "potential": "materu",
+        "passive": "matareru",
+        "causative": "mataseru",
+        "causative passive": "mataserareru",
+        "imperative": "mate",
+        "negative": "matanai",
+        "polite negative": "machimasen",
+        "past negative": "matanakatta",
+        "past polite negative": "machimasendeshita",
+        "te-form negative": "matanakute",
+        "potential negative": "matenai",
+        "passive negative": "matarenai",
+        "causative negative": "matasenai",
+        "causative passive negative": "mataserarenai",
+        "imperative negative": "matsuna"
+    },
+    "toru":{
+        "polite": "torimasu",
+        "past": "totta",
+        "past polite": "torimashita",
+        "te-form": "totte",
+        "potential": "toreru",
+        "passive": "torareru",
+        "causative": "toraseru",
+        "causative passive": "toraserareru",
+        "imperative": "tore",
+        "negative": "toranai",
+        "polite negative": "torimasen",
+        "past negative": "toranakatta",
+        "past polite negative": "torimasendeshita",
+        "te-form negative": "toranakute",
+        "potential negative": "torenai",
+        "passive negative": "torarenai",
+        "causative negative": "torasenai",
+        "causative passive negative": "toraserarenai",
+        "imperative negative": "toruna"
+    },
+    "yomu":{
+        "polite": "yomimasu",
+        "past": "yonda",
+        "past polite": "yomimashita",
+        "te-form": "yonde",
+        "potential": "yomeru",
+        "passive": "yomareru",
+        "causative": "yomaseru",
+        "causative passive": "yomaserareru",
+        "imperative": "yome",
+        "negative": "yomanai",
+        "polite negative": "yomimasen",
+        "past negative": "yominakatta",
+        "past polite negative": "yomimasendeshita",
+        "te-form negative": "yomanakute",
+        "potential negative": "yomenai",
+        "passive negative": "yomarenai",
+        "causative negative": "yomasenai",
+        "causative passive negative": "yomaserarenai",
+        "imperative negative": "yomuna"
+    },
+    "tobu":{
+        "polite": "tobimasu",
+        "past": "tonda",
+        "past polite": "tobimashita",
+        "te-form": "tonde",
+        "potential": "toberu",
+        "passive": "tobareru",
+        "causative": "tobaseru",
+        "causative passive": "tobaserareru",
+        "imperative": "tobe",
+        "negative": "tobanai",
+        "polite negative": "tobimasen",
+        "past negative": "tobanakatta",
+        "past polite negative": "tobimasendeshita",
+        "te-form negative": "tobanakute",
+        "potential negative": "tobenai",
+        "passive negative": "tobarenai",
+        "causative negative": "tobasenai",
+        "causative passive negative": "tobaserarenai",
+        "imperative negative": "tobuna"
+    },
+    "kaku":{
+        "polite": "kakimasu",
+        "past": "kaita",
+        "past polite": "kakimashita",
+        "te-form": "kaite",
+        "potential": "kakeru",
+        "passive": "kakareru",
+        "causative": "kakaseru",
+        "causative passive": "kakaserareru",
+        "imperative": "kake",
+        "negative": "kakanai",
+        "polite negative": "kakimasen",
+        "past negative": "kakanakatta",
+        "past polite negative": "kakimasendeshita",
+        "te-form negative": "kakanakute",
+        "potential negative": "kakenai",
+        "passive negative": "kakarenai",
+        "causative negative": "kakasenai",
+        "causative passive negative": "kakaserarenai",
+        "imperative negative": "kakuna"
+    },
+    "oyogu":{
+        "polite": "oyogimasu",
+        "past": "oyoida",
+        "past polite": "oyogimashita",
+        "te-form": "oyoide",
+        "potential": "oyogeru",
+        "passive": "oyogareru",
+        "causative": "oyogaseru",
+        "causative passive": "oyogaserareru",
+        "imperative": "oyoge",
+        "negative": "oyoganai",
+        "polite negative": "oyogimasen",
+        "past negative": "oyoganakatta",
+        "past polite negative": "oyogimasendeshita",
+        "te-form negative": "oyoganakute",
+        "potential negative": "oyogenai",
+        "passive negative": "oyogarenai",
+        "causative negative": "oyogasenai",
+        "causative passive negative": "oyogaserarenai",
+        "imperative negative": "oyoguna"
+    },
+    "kasu":{
+        "polite": "kashimasu",
+        "past": "kashita",
+        "past polite": "kashimashita",
+        "te-form": "kashite",
+        "potential": "kaseru",
+        "passive": "kasareru",
+        "causative": "kasaseru",
+        "causative passive": "kasaserareru",
+        "imperative": "kase",
+        "negative": "kasanai",
+        "polite negative": "kashimasen",
+        "past negative": "kasanakatta",
+        "past polite negative": "kashimasendeshita",
+        "te-form negative": "kasanakute",
+        "potential negative": "kasenai",
+        "passive negative": "kasarenai",
+        "causative negative": "kasasenai",
+        "causative passive negative": "kasaserarenai",
+        "imperative negative": "kasuna"
+    },
+    "taberu":{
+        "polite": "tabemasu",
+        "past": "tabeta",
+        "past polite": "tabemashita",
+        "te-form": "tabete",
+        "potential": "taberareru",
+        "passive": "taberareru",
+        "causative": "tabesaseru",
+        "causative passive": "tabesaserareru",
+        "imperative": "tabero",
+        "negative": "tabenai",
+        "polite negative": "tabemasen",
+        "past negative": "tabenakatta",
+        "past polite negative": "tabemasendeshita",
+        "te-form negative": "tabenakute",
+        "potential negative": "taberarenai",
+        "passive negative": "taberarenai",
+        "causative negative": "tabesasenai",
+        "causative passive negative": "tabesaserarenai",
+        "imperative negative": "taberuna"
+    },
+};
+{% endblock %}

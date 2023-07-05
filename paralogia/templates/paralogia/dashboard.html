@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito">
+
+	<script type="text/javascript" src="{{ url_for('static', filename='js/dictionary.js') }}"></script>
+
+
+	<title>Paralogia</title>
+
+
+	<style>
+		.btn-close {
+			width: 2px !important;
+		}
+
+		#navbar,
+		#cardGroupView {
+			color: black !important;
+			text-decoration: none !important;
+			user-select: none;
+		}
+
+		body {
+			font-family: Nunito, sans-serif;
+		}
+
+		.brand-large {
+			font-size: 150%;
+		}
+
+		.text-large {
+			font-size: 120%;
+		}
+
+		.img-card {
+			filter: brightness(0.50);
+			transition: 0.3s;
+		}
+
+		.card-img-top {
+			width: 100%;
+			height: 15vw;
+			object-fit: cover;
+		}
+
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translate3d(0, -10%, 0);
+			}
+
+			to {
+				opacity: 1;
+				transform: translate3d(0, 0, 0);
+			}
+		}
+
+		.brand-large:hover {
+			cursor: default;
+		}
+
+		.col {
+			animation: fadeIn 0.25s ease-in both;
+			user-select: none;
+		}
+
+		#logout:hover,
+		.col:hover {
+			cursor: pointer;
+		}
+
+		.ccard {
+			transition: bottom 0.5s ease;
+		}
+
+		.card-title {
+			color: white !important;
+		}
+
+		.center {
+			padding: 0;
+			margin: 0;
+			border: 3px solid green;
+		}
+
+		.cardContentWrapper {
+			text-align: center;
+			margin-top: 50px;
+			margin-bottom: 50px;
+		}
+
+		.cardIcon {
+			font-size: 50px;
+			margin-left: 1.5px;
+		}
+
+		@media only screen and (max-width:1000px) and (min-width:768px) {
+
+			.cardText,
+			.cardTranslation {
+				overflow-wrap: normal;
+				font-size: medium;
+			}
+		}
+
+		.headerWrapper {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		#username {
+			cursor: pointer;
+		}
+	</style>
+	<script>
+
+		const cards = {
+			'mainCards': [
+				{
+					'icon': '📖',
+					'text': '図書館',
+					'translation': 'library',
+				},
+				{
+					'icon': '🧠',
+					'text': '暗記',
+					'translation': 'memorization',
+				},
+				{
+					'icon': 'ABC',
+					'text': '文字',
+					'translation': 'alphabet',
+				},
+				{
+					'icon': '🏋',
+					'text': '文法練習',
+					'translation': 'grammar drills',
+				}],
+			'grammarDrills': [
+				{
+					'icon': '🏃',
+					'text': '動詞',
+					'translation': 'verbs',
+					'link': 'practice?topic=verbs'
+				},
+				{
+					'icon': '123',
+					'text': '助数詞',
+					'translation': 'counters',
+					'link': 'practice?topic=counters'
+				}],
+			'alphabet': [
+				{
+					'icon': 'あ/ア',
+					'text': '仮名',
+					'translation': 'kana',
+					'link': 'practice?topic=kana'
+				},
+				{
+					'icon': '漢',
+					'text': '漢字',
+					'translation': 'kanji',
+					'link': 'practice?topic=kanji'
+				}],
+			'memorization': [
+				{
+				}],
+			'library': [
+				{
+					'icon': '👓',
+					'text': 'リーダーモード',
+					'translation': 'reader mode',
+					'link': 'reader'
+				},
+
+			]
+		}
+
+		async function getLibraryBooks() {
+			const response = await fetch('http://127.0.0.1:5000/getLibraryBooks');
+			return await response.json();
+		}
+
+		async function loadLibraryBooks() {
+			const books = await getLibraryBooks();
+			for (let i in books) {
+				cards.library.push(
+					{
+						'icon': '📃',
+						'text': books[i]['title'],
+						'translation': books[i]['translation'],
+						'link': 'library?book=' + books[i]['title'] + '-' + books[i]['translation']
+					}
+				);
+			}
+			buildCardGroupView('library');
+		};
+
+		async function getWordDecks() {
+			const response = await fetch('http://127.0.0.1:5000/getDecks');
+			return await response.json();
+		}
+
+		async function loadWordDecks() {
+			const decks = await getWordDecks();
+			for (let i in decks) {
+				cards.memorization.push(
+					{
+						'icon': '🗍',
+						'text': decks[i]['title'],
+						'translation': decks[i]['translation'],
+						'link': 'memorizer?deck=' + decks[i]['title']
+					}
+				);
+			}
+			buildCardGroupView('memorization');
+		};
+
+		function isEmpty(obj) {
+			for (const prop in obj) {
+				if (Object.hasOwn(obj, prop)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		function openCard(card) {
+
+			if (card.value) {
+				location.href = card.value;
+			} else {
+
+				let cardName = card.getElementsByClassName('cardTranslation')[0].innerHTML;
+				const splitName = cardName.split(' ');
+
+				if (splitName.length > 1) {
+					cardName = splitName[0];
+
+					for (var i = 1; i < splitName.length; i++) {
+						const upperCaseVersion = splitName[i].charAt(0).toUpperCase() + splitName[i].slice(1);
+						cardName += upperCaseVersion;
+					}
+				}
+
+				buildCardGroupView(cardName);
+			}
+		}
+
+		function buildCardGroupView(groupName) {
+
+			const cardGroupView = document.getElementById('cardGroupView');
+			cardGroupView.innerHTML = '';
+			cardGroupView.setAttribute('class', 'my-5 mx-5 row row-cols-1 row-cols-md-4 g-4');
+
+
+			if (groupName != 'mainCards') {
+				let cardHTML = '';
+				cardHTML += '<div class="card h-100">';
+				cardHTML += '<div class="cardContentWrapper">';
+				cardHTML += '<h5 class="cardIcon">↩</h5>';
+				cardHTML += '<h5 class="cardText">Back to Dashboard</h5>';
+				cardHTML += '</div> </div> </div>';
+
+				const card = document.createElement('div');
+				card.classList.add('col');
+
+				card.innerHTML = cardHTML;
+				card.setAttribute('onclick', 'buildCardGroupView("mainCards")');
+				cardGroupView.appendChild(card);
+			}
+
+
+			for (groupCard in cards[groupName]) {
+				if (!isEmpty(cards[groupName][groupCard])) {
+
+					const card = document.createElement('div');
+					card.classList.add('col');
+					let cardHTML = '';
+					cardHTML += '<div class="card h-100">';
+					cardHTML += '<div class="cardContentWrapper">';
+					cardHTML += '<h5 class="cardIcon">' + cards[groupName][groupCard]['icon'] + '</h5>';
+					cardHTML += '<h5 class="cardText">' + cards[groupName][groupCard]['text'] + '</h5>';
+					if (cards[groupName][groupCard]['translation'] != undefined) {
+						cardHTML += '<h5 class="cardTranslation">' + cards[groupName][groupCard]['translation'] + '</h5>';
+					}
+					cardHTML += '</div> </div>'
+
+					card.innerHTML = cardHTML;
+					if (cards[groupName][groupCard]['link']) {
+						card.value = cards[groupName][groupCard]['link'];
+					}
+
+					card.setAttribute('onclick', 'openCard(this)');
+					cardGroupView.appendChild(card);
+				}
+			}
+
+			if (groupName == 'library' && Object.keys(cards.library).length == 1) {
+				let cardHTML = '';
+				cardHTML += '<div class="card h-100">';
+				cardHTML += '<div class="cardContentWrapper">';
+				cardHTML += '<div id="spinner" class="spinner-border mt-5" rule="status"></div>'
+				cardHTML += '</div> </div>';
+
+				const card = document.createElement('div');
+				card.classList.add('col');
+
+				card.innerHTML = cardHTML;
+				cardGroupView.appendChild(card);
+
+				loadLibraryBooks();
+			}
+
+			if (groupName == 'memorization' && Object.keys(cards.memorization).length == 1) {
+				let cardHTML = '';
+				cardHTML += '<div class="card h-100">';
+				cardHTML += '<div class="cardContentWrapper">';
+				cardHTML += '<div id="spinner" class="spinner-border mt-5" rule="status"></div>'
+				cardHTML += '</div> </div>';
+
+				const card = document.createElement('div');
+				card.classList.add('col');
+
+				card.innerHTML = cardHTML;
+				cardGroupView.appendChild(card);
+
+				loadWordDecks();
+			}
+		}
+
+	</script>
+</head>
+
+<body>
+
+	<!-- NAVBAR -->
+
+	<div id="navbar" class="container my-3">
+		<div class="headerWrapper">
+			<h5 style="font-size:x-large">Paralogia</h5>
+			<div>
+				<strong style="margin-right:20px">🇺🇸 ➡ 🇯🇵</strong>
+				<strong id="username" style="margin-right:20px"
+					onclick="location.href = '{{ url_for( 'paralogia.user_settings' ) }}'">{{username}}</strong>
+				<span id="logout" onclick="location.href = '{{ url_for( 'auth.logout' ) }}'">Log Out</span>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- SEARCHBAR -->
+
+	<div class="container">
+		<div class="d-flex">
+
+			<input class="form-control" id="dictionarySearch" name="dictionarySearch"
+				placeholder="辞書を引く (Search for a word in the dictionary)">
+
+			<button class="btn btn-lg" type="submit">
+
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+					viewBox="0 0 16 16">
+					<path
+						d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+				</svg>
+
+			</button>
+		</div>
+	</div>
+
+	<!-- SEARCH RESULTS -->
+
+	<div class="container">
+		<div id="dictionarySearchResults"></div>
+	</div>
+
+
+	<!-- CARD GROUPVIEW -->
+	<div id="cardGroupView"></div>
+
+
+
+
+
+
+
+
+
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+		crossorigin="anonymous"></script>
+
+	<script>
+		buildCardGroupView('mainCards');
+
+
+		function closeSearchResults() {
+			document.getElementById('dictionarySearchResults').innerHTML = '';
+			document.getElementById('dictionarySearch').value = '';
+			document.getElementById('cardGroupView').style.removeProperty('display');
+		}
+
+		document.getElementById('dictionarySearch').addEventListener("keyup", function () {
+			if (this.value == '') {
+				closeSearchResults();
+			}
+		});
+
+
+		document.getElementById('dictionarySearch').addEventListener('keydown', function (e) {
+			if (e.key === 'Enter' || e.keycode === 13) {
+				if (this.value != '' || this.value != this.defaultValue) {
+
+					document.getElementById('dictionarySearchResults').innerHTML = '<button onclick="closeSearchResults(); return" type="button" class="btn-close mt-4" aria-label="Close"></button>';
+					document.getElementById('cardGroupView').style.display = 'none';
+
+					const search = document.getElementById('dictionarySearch').value.trim();
+
+					const destinyDiv = 'dictionarySearchResults';
+					dictionarySearch(search, destinyDiv);
+				}
+			}
+		});
+
+		document.addEventListener('mouseup', function (e) {
+			if (document.getSelection().toString().trim()) {
+				document.getElementById('dictionarySearch').value = document.getSelection().toString().trim();
+				document.getElementById('dictionarySearch').focus();
+			}
+		});
+
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,384 @@
+{% extends 'paralogia/practice/base.html' %}
+
+{% block generateProblem %}
+const counters = Object.keys(dict);
+const randomCounter = randChoice(counters);
+
+const numbers = Object.keys(dict[randomCounter]['numbers']);
+const randomNumber = randChoice(numbers);
+
+const entities = Object.keys(dict[randomCounter]['exampleEntities']);
+const randomEntity = randChoice(entities);
+
+if (randomNumber == 1) {
+    document.getElementById('problem').innerHTML = randomNumber + ' ' + randomEntity;
+} else {
+    document.getElementById('problem').innerHTML = randomNumber + ' ' + randomEntity + 's';
+}
+
+randomEntityPicture = dict[randomCounter]['exampleEntities'][randomEntity];
+
+if (randomEntity == 'hundred' || randomEntity == 'thousand') {
+    document.getElementById('picture').innerHTML = randomNumber + 'x' + randomEntityPicture;
+} else if (randomEntity == 'hour') {
+    document.getElementById('picture').innerHTML = randomEntityPicture + ' +' + randomNumber + 'h';
+} else if (randomEntity == 'minute') {
+    document.getElementById('picture').innerHTML = randomEntityPicture + ' +' + randomNumber + 'm';
+} else {
+    document.getElementById('picture').innerHTML = (randomEntityPicture + ' ').repeat(randomNumber);
+}
+
+solution = dict[randomCounter]['numbers'][randomNumber];
+{% endblock %}
+
+{% block body %}
+<div id="problem">counter</div>
+
+<hr>
+
+<div id="picture">🐮</div>
+
+<hr>
+
+<div id="counterInput">
+    <input id="input" autofocus placeholder="助数詞">
+</div>
+{% endblock %}
+
+
+
+{% block imageLink %}{{ url_for('static',filename='images/counters_cheatsheet.jpg')}}{% endblock %}
+
+{% block afterBodyScript %}
+
+dict = {
+    'thing': {
+        'numbers': {
+            "1": "hitotsu",
+            "2": "futatsu",
+            "3": "mittsu",
+            "4": "yottsu",
+            "5": "itsutsu",
+            "6": "muttsu",
+            "7": "nanatsu",
+            "8": "yattsu",
+            "9": "kokonotsu",
+            "10": "too"
+        }, 'exampleEntities': { 'cellphone': '📱' }
+    },
+
+    'object': {
+        'numbers': {
+            "1": "ikko",
+            "2": "niko",
+            "3": "sanko",
+            "4": "yonko",
+            "5": "goko",
+            "6": "rokko",
+            "7": "nanako",
+            "8": "hakko",
+            "9": "kyuuko",
+            "10": "jukko"
+        }, 'exampleEntities': { 'apple': '🍎' }
+    },
+
+    'year old (person)': {
+        'numbers': {
+            "1": "issai",
+            "2": "nisai",
+            "3": "sansai",
+            "4": "yonsai",
+            "5": "gosai",
+            "6": "rokusai",
+            "7": "nanasai",
+            "8": "hassai",
+            "9": "kyuusai",
+            "10": "jussai"
+        }, 'exampleEntities': { "(person) year": '🎂' }
+    },
+
+    'day': {
+        'numbers': {
+            "1": "ichinichi",
+            "2": "futsuka",
+            "3": "mikka",
+            "4": "yokka",
+            "5": "itsuka",
+            "6": "muika",
+            "7": "nanoka",
+            "8": "youka",
+            "9": "kokonoka",
+            "10": "tooka"
+        }, 'exampleEntities': { 'day': '☀️' }
+    },
+
+    'month': {
+        'numbers': {
+            "1": "ichigatsu",
+            "2": "nigatsu",
+            "3": "sangatsu",
+            "4": "shigatsu",
+            "5": "gogatsu",
+            "6": "rokugatsu",
+            "7": "shichigatsu",
+            "8": "hachigatsu",
+            "9": "kugatsu",
+            "10": "juugatsu"
+        }, 'exampleEntities': { 'month': '🗓' }
+    },
+
+    'year': {
+        'numbers': {
+            "1": "ichinen",
+            "2": "ninen",
+            "3": "sannen",
+            "4": "yonen",
+            "5": "gonen",
+            "6": "rokunen",
+            "7": "nananen",
+            "8": "hachinen",
+            "9": "kyuunen",
+            "10": "juunen"
+        }, 'exampleEntities': { 'year': '🎆' }
+    },
+
+    'person': {
+        'numbers': {
+            "1": "hitori",
+            "2": "futari",
+            "3": "sannin",
+            "4": "yonin",
+            "5": "gonin",
+            "6": "rokunin",
+            "7": "shichinin",
+            "8": "hachinin",
+            "9": "kyuunin",
+            "10": "juunin"
+        }, 'exampleEntities': { 'person': '🧍' }
+    },
+
+    'minute': {
+        'numbers': {
+            "1": "ippunkan",
+            "2": "nifunkan",
+            "3": "sanpunkan",
+            "4": "yonpunkan",
+            "5": "gofunkan",
+            "6": "roppunkan",
+            "7": "nanafunkan",
+            "8": "happunkan",
+            "9": "kyuufunkan",
+            "10": "juppunkan"
+        }, 'exampleEntities': { 'minute': '⌚' }
+    },
+
+    'hour': {
+        'numbers': {
+            "1": "ichijikan",
+            "2": "nijikan",
+            "3": "sanjikan",
+            "4": "yojikan",
+            "5": "gojikan",
+            "6": "rokujikan",
+            "7": "shichijikan",
+            "8": "hachijikan",
+            "9": "kujikan",
+            "10": "juujikan"
+        }, 'exampleEntities': { 'hour': '⌚ ' }
+    },
+
+    'long, cylindrical object': {
+        'numbers': {
+            "1": "ippon",
+            "2": "nihon",
+            "3": "sanbon",
+            "4": "yonhon",
+            "5": "gohon",
+            "6": "roppon",
+            "7": "nanahon",
+            "8": "happon",
+            "9": "kyuuhon",
+            "10": "juppon"
+        }, 'exampleEntities': { 'pen': '🖊' }
+    },
+
+    'hundred': {
+        'numbers': {
+            "1": "hyaku",
+            "2": "nihyaku",
+            "3": "sanbyaku",
+            "4": "yonhyaku",
+            "5": "gohyaku",
+            "6": "roppyaku",
+            "7": "nanahyaku",
+            "8": "happyaku",
+            "9": "kyuuhyaku"
+        }, 'exampleEntities': { 'hundred': '100' }
+    },
+
+    'thousand': {
+        'numbers': {
+            "1": "issen",
+            "2": "nisen",
+            "3": "sanzen",
+            "4": "yonsen",
+            "5": "gosen",
+            "6": "rokusen",
+            "7": "nanasen",
+            "8": "hassen",
+            "9": "kyuusen"
+        }, 'exampleEntities': { 'thousand': '1000' }
+    },
+
+    'flat object': {
+        'numbers': {
+            "1": "ichimai",
+            "2": "nimai",
+            "3": "sanmai",
+            "4": "yonmai",
+            "5": "gomai",
+            "6": "rokumai",
+            "7": "nanamai",
+            "8": "hachimai",
+            "9": "kyuumai",
+            "10": "juumai"
+        }, 'exampleEntities': { 'shirt': '👕' }
+    },
+
+    'big object': {
+        'numbers': {
+            "1": "ichidai",
+            "2": "nidai",
+            "3": "sandai",
+            "4": "yondai",
+            "5": "godai",
+            "6": "rokudai",
+            "7": "nanadai",
+            "8": "hachidai",
+            "9": "kyuudai",
+            "10": "juudai"
+        }, 'exampleEntities': { 'car': '🚗' }
+    },
+
+    'book': {
+        'numbers': {
+            "1": "issatsu",
+            "2": "nisatsu",
+            "3": "sansatsu",
+            "4": "yonsatsu",
+            "5": "gosatsu",
+            "6": "rokusatsu",
+            "7": "nanasatsu",
+            "8": "hachisatsu",
+            "9": "kyuusatsu",
+            "10": "jussatsu"
+        }, 'exampleEntities': { 'book': '📙' }
+    },
+
+    'drink': {
+        'numbers': {
+            "1": "ippai",
+            "2": "nihai",
+            "3": "sanbai",
+            "4": "yonhai",
+            "5": "gohai",
+            "6": "roppai",
+            "7": "nanahai",
+            "8": "happai",
+            "9": "kyuuhai",
+            "10": "juppai"
+        }, 'exampleEntities': { 'cup': '☕' }
+    },
+
+    'small animal': {
+        'numbers': {
+            "1": "ippiki",
+            "2": "nihiki",
+            "3": "sanbiki",
+            "4": "yonhiki",
+            "5": "gohiki",
+            "6": "roppiki",
+            "7": "nanahiki",
+            "8": "happiki",
+            "9": "kyuuhiki",
+            "10": "juppiki"
+        }, 'exampleEntities': { 'dog': '🐕' }
+    },
+
+    'big animal': {
+        'numbers': {
+            "1": "ittou",
+            "2": "nitou",
+            "3": "santou",
+            "4": "yontou",
+            "5": "gotou",
+            "6": "rokutou",
+            "7": "nanatou",
+            "8": "hachitou",
+            "9": "kyuutou",
+            "10": "juttou"
+        }, 'exampleEntities': { 'cow': '🐄' }
+    },
+
+    'bird': {
+        'numbers': {
+            "1": "ichiwa",
+            "2": "niwa",
+            "3": "sanwa",
+            "4": "yonwa",
+            "5": "gowa",
+            "6": "rokuwa",
+            "7": "nanawa",
+            "8": "hachiwa",
+            "9": "kyuuwa",
+            "10": "juuwa"
+        }, 'exampleEntities': { 'bird': '🐦' }
+    },
+
+    'yen': {
+        'numbers': {
+            "1": "ichien",
+            "2": "nien",
+            "3": "sanen",
+            "4": "yonen",
+            "5": "goen",
+            "6": "rokuen",
+            "7": "nanaen",
+            "8": "hachien",
+            "9": "kyuuen",
+            "10": "juuen"
+        }, 'exampleEntities': { 'yen': '🪙' }
+    },
+
+    'time': {
+        'numbers': {
+            "1": "ikkai",
+            "2": "nikai",
+            "3": "sankai",
+            "4": "yonkai",
+            "5": "gokai",
+            "6": "rokkai",
+            "7": "nanakai",
+            "8": "hachikai",
+            "9": "kyuukai",
+            "10": "jukkai"
+        }, 'exampleEntities': { 'time': '↻' }
+    },
+
+    'floor': {
+        'numbers': {
+            "1": "ikkai",
+            "2": "nikai",
+            "3": "sankai",
+            "4": "yonkai",
+            "5": "gokai",
+            "6": "rokkai",
+            "7": "nanakai",
+            "8": "hachikai",
+            "9": "kyuukai",
+            "10": "jukkai"
+        }, 'exampleEntities': { 'floor': '🛗' }
+    }
+};
+
+{% endblock %}

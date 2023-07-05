@@ -1,0 +1,21 @@
+{% extends 'auth/base.html' %}
+
+{% block pageTitle %}
+Login
+{% endblock %}
+
+{% block formSubtitle %} 
+Who said learning languages have got to be hard? 
+{% endblock %}
+
+{% block buttonText %}
+Log in
+{% endblock %}
+
+{% block afterButton %}
+Don't have an account yet? <a href="{{ url_for( 'auth.signup' ) }}" class="ps-hero__content__link">Sign up</a>
+{% endblock %}
+
+{% block afterBodyScript %}
+document.getElementById('passwordConfirmWrapper').remove();
+{% endblock %}

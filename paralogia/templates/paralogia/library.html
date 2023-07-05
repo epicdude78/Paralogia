@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library - {{bookTitle}}</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script type="text/javascript" src="{{ url_for('static', filename='js/dictionary.js') }}"></script>
+
+    <style>
+        body {
+            font-family: Nunito, sans-serif;
+        }
+
+        #exit {
+            cursor: pointer;
+            display: inline-block;
+            margin-left: 40px;
+            margin-top: 20px;
+        }
+
+        .sidebar {
+            width: 45vw;
+            position: fixed;
+            top: 0;
+            right: 0;
+            padding-top: 20px;
+            border-left: 1px solid black;
+            height: 100%;
+            overflow-y: overlay;
+        }
+
+        #content {
+            padding-right: 55vw;
+        }
+
+        hr {
+            height: 2px;
+            background-color: #555;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            width: 75%;
+        }
+
+        p {
+            word-break: break-word;
+        }
+
+        @media only screen and (max-width:888px) {
+            .sidebar{
+                width:40vw;
+            }
+            #content{
+                padding-right:50vw;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div>
+        <button id="exit" style="height:5px;width:5px;" type="button" class="btn-close mt-4" aria-label="Close"
+            onclick="location.href='{{ url_for('paralogia.index') }}'"></button>
+    </div>
+
+    <div class="sidebar">
+        <div class="m-5" id="synonymsWrapper">
+            <h3 id="searchedWord"></h3>
+            <div id="results">Highlight a word to have meanings show up here.</div>
+        </div>
+    </div>
+
+
+    <div id="content">
+        <div class="container m-5">
+            <h1>{{bookTitle}}</h1>
+            <h4>{{bookTitleTranslation}}</h4>
+            <hr>
+            {% for line in bookContent %}
+            <p>{{ line }}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+
+</body>
+<script>
+    window.addEventListener('mouseup', function (e) {
+        const highlightedText = document.getSelection().toString();
+
+        if (highlightedText != '' && highlightedText != ' ') {
+
+            document.getElementById('searchedWord').innerHTML = highlightedText.trim();
+            document.getElementById('results').innerHTML = '';
+
+            const spinner = document.createElement('div');
+            spinner.innerHTML = '<div id="spinner" class="spinner-border mt-5" rule="status"></div>';
+            spinner.id = 'spinner';
+
+            document.getElementById('results').appendChild(spinner);
+
+            dictionarySearch(highlightedText, 'results');
+
+            document.getElementById('spinner').remove();
+
+        }
+    })
+</script>
+
+</html>

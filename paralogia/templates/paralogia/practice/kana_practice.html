@@ -1,0 +1,236 @@
+{% extends 'paralogia/practice/base.html' %}
+
+{% block generateProblem %}
+
+const kanaDictEntries = Object.keys(dict);
+
+const randomEntry = randChoice(kanaDictEntries);
+solution = randomEntry;
+
+const kana = dict[randomEntry];
+
+if (document.getElementById('hiraganaCheckbox').checked == false &&
+    document.getElementById('katakanaCheckbox').checked == false) {
+    document.getElementById('hiraganaCheckbox').checked = true;
+}
+
+const kanaTypes = [];
+if (document.getElementById('hiraganaCheckbox').checked == true) {
+    kanaTypes.push(kana['hiragana']);
+}
+if (document.getElementById('katakanaCheckbox').checked == true) {
+    kanaTypes.push(kana['katakana']);
+}
+
+const randomKanaType = randChoice(kanaTypes);
+document.getElementById('problem').innerHTML = randomKanaType;
+
+const optionCards = document.getElementsByClassName('optionCard');
+
+const existentOptions = [];
+existentOptions.push(solution);
+for (i in optionCards) {
+    var generatedOption = existentOptions[0];
+    while (existentOptions.includes(generatedOption)) {
+        generatedOption = randChoice(kanaDictEntries);
+    }
+    optionCards[i].innerHTML = generatedOption;
+    existentOptions.push(generatedOption);
+}
+
+correctOption = randChoice(optionCards);
+correctOption.innerHTML = solution;
+
+{% endblock %}
+
+{% block topWrapper %}
+<div class="mt-2 text-end text-sm-start">
+    <input type="checkbox" id="hiraganaCheckbox" name="hiragana" checked>
+    <label for="hiraganaCheckbox">hiragana</label><br>
+    <input type="checkbox" id="katakanaCheckbox" name="katakana" checked>
+    <label for="katakanaCheckbox">katakana</label><br>
+</div>
+{% endblock %}
+
+{% block body %}
+<div id="problem"></div>
+
+<hr>
+
+<div id="optionsWrapper">
+
+    <div class="optionCard"></div>
+
+    <div class="optionCard"></div>
+
+    <div class="optionCard"></div>
+
+    <div class="optionCard"></div>
+
+</div>
+{% endblock %}
+
+
+
+{% block imageLink %}{{ url_for('static',filename='images/kana_cheatsheet.png')}}{% endblock %}
+
+{% block afterBodyScript %}
+document.getElementById('revealAnswerButton').style.display = 'none';
+
+dict = {
+    "a": { "hiragana": "あ", "katakana": "ア" },
+    "i": { "hiragana": "い", "katakana": "イ" },
+    "u": { "hiragana": "う", "katakana": "ウ" },
+    "e": { "hiragana": "え", "katakana": "エ" },
+    "o": { "hiragana": "お", "katakana": "オ" },
+    "ka": { "hiragana": "か", "katakana": "カ" },
+    "ga": { "hiragana": "が", "katakana": "ガ" },
+    "ki": { "hiragana": "き", "katakana": "キ" },
+    "gi": { "hiragana": "ぎ", "katakana": "ギ" },
+    "ku": { "hiragana": "く", "katakana": "ク" },
+    "gu": { "hiragana": "ぐ", "katakana": "グ" },
+    "ke": { "hiragana": "け", "katakana": "ケ" },
+    "ge": { "hiragana": "げ", "katakana": "ゲ" },
+    "ko": { "hiragana": "こ", "katakana": "コ" },
+    "go": { "hiragana": "ご", "katakana": "ゴ" },
+    "kya": { "hiragana": "きゃ", "katakana": "キャ" },
+    "gya": { "hiragana": "ぎゃ", "katakana": "ギャ" },
+    "kyu": { "hiragana": "きゅ", "katakana": "キュ" },
+    "gyu": { "hiragana": "ぎゅ", "katakana": "ギュ" },
+    "kyo": { "hiragana": "きょ", "katakana": "キョ" },
+    "gyo": { "hiragana": "ぎょ", "katakana": "ギョ" },
+    "sa": { "hiragana": "さ", "katakana": "サ" },
+    "za": { "hiragana": "ざ", "katakana": "ザ" },
+    "shi": { "hiragana": "し", "katakana": "シ" },
+    "ji": { "hiragana": "じ", "katakana": "ジ" },
+    "su": { "hiragana": "す", "katakana": "ス" },
+    "zu": { "hiragana": "づ", "katakana": "ヅ" },
+    "se": { "hiragana": "せ", "katakana": "セ" },
+    "ze": { "hiragana": "ぜ", "katakana": "ゼ" },
+    "so": { "hiragana": "そ", "katakana": "ソ" },
+    "zo": { "hiragana": "ぞ", "katakana": "ゾ" },
+    "sha": { "hiragana": "しゃ", "katakana": "シャ" },
+    "ja": { "hiragana": "じゃ", "katakana": "ジャ" },
+    "shu": { "hiragana": "しゅ", "katakana": "シュ" },
+    "ju": { "hiragana": "じゅ", "katakana": "ジュ" },
+    "sho": { "hiragana": "しょ", "katakana": "ショ" },
+    "jo": { "hiragana": "じょ", "katakana": "ジョ" },
+    "ta": { "hiragana": "た", "katakana": "タ" },
+    "da": { "hiragana": "だ", "katakana": "ダ" },
+    "chi": { "hiragana": "ち", "katakana": "チ" },
+    "tsu": { "hiragana": "つ", "katakana": "ツ" },
+    "te": { "hiragana": "て", "katakana": "テ" },
+    "de": { "hiragana": "で", "katakana": "デ" },
+    "to": { "hiragana": "と", "katakana": "ト" },
+    "do": { "hiragana": "ど", "katakana": "ド" },
+    "cha": { "hiragana": "ちゃ", "katakana": "チャ" },
+    "chu": { "hiragana": "ちゅ", "katakana": "チュ" },
+    "cho": { "hiragana": "ちょ", "katakana": "チョ" },
+    "na": { "hiragana": "な", "katakana": "ナ" },
+    "ni": { "hiragana": "に", "katakana": "ニ" },
+    "nu": { "hiragana": "ぬ", "katakana": "ヌ" },
+    "ne": { "hiragana": "ね", "katakana": "ネ" },
+    "no": { "hiragana": "の", "katakana": "ノ" },
+    "nya": { "hiragana": "にゃ", "katakana": "ニャ" },
+    "nyu": { "hiragana": "にゅ", "katakana": "ニュ" },
+    "nyo": { "hiragana": "にょ", "katakana": "ニョ" },
+    "ha": { "hiragana": "は", "katakana": "ハ" },
+    "ba": { "hiragana": "ば", "katakana": "バ" },
+    "pa": { "hiragana": "ぱ", "katakana": "パ" },
+    "hi": { "hiragana": "ひ", "katakana": "ヒ" },
+    "bi": { "hiragana": "び", "katakana": "ビ" },
+    "pi": { "hiragana": "ぴ", "katakana": "ピ" },
+    "fu": { "hiragana": "ふ", "katakana": "フ" },
+    "bu": { "hiragana": "ぶ", "katakana": "ブ" },
+    "pu": { "hiragana": "ぷ", "katakana": "プ" },
+    "he": { "hiragana": "へ", "katakana": "ヘ" },
+    "be": { "hiragana": "べ", "katakana": "ベ" },
+    "pe": { "hiragana": "ぺ", "katakana": "ペ" },
+    "ho": { "hiragana": "ほ", "katakana": "ホ" },
+    "bo": { "hiragana": "ぼ", "katakana": "ボ" },
+    "po": { "hiragana": "ぽ", "katakana": "ポ" },
+    "hya": { "hiragana": "ひゃ", "katakana": "ヒャ" },
+    "bya": { "hiragana": "びゃ", "katakana": "ビャ" },
+    "pya": { "hiragana": "ぴゃ", "katakana": "ピャ" },
+    "hyu": { "hiragana": "ひゅ", "katakana": "ヒュ" },
+    "byu": { "hiragana": "びゅ", "katakana": "ビュ" },
+    "pyu": { "hiragana": "ぴゅ", "katakana": "ピュ" },
+    "hyo": { "hiragana": "ひょ", "katakana": "ヒョ" },
+    "byo": { "hiragana": "びょ", "katakana": "ビョ" },
+    "pyo": { "hiragana": "ぴょ", "katakana": "ピョ" },
+    "ma": { "hiragana": "ま", "katakana": "マ" },
+    "mi": { "hiragana": "み", "katakana": "ミ" },
+    "mu": { "hiragana": "む", "katakana": "ム" },
+    "me": { "hiragana": "め", "katakana": "メ" },
+    "mo": { "hiragana": "も", "katakana": "モ" },
+    "mya": { "hiragana": "みゃ", "katakana": "ミャ" },
+    "myu": { "hiragana": "みゅ", "katakana": "ミュ" },
+    "myo": { "hiragana": "みょ", "katakana": "ミョ" },
+    "ya": { "hiragana": "や", "katakana": "ヤ" },
+    "yu": { "hiragana": "ゆ", "katakana": "ユ" },
+    "yo": { "hiragana": "よ", "katakana": "ヨ" },
+    "ra": { "hiragana": "ら", "katakana": "ラ" },
+    "ri": { "hiragana": "り", "katakana": "リ" },
+    "ru": { "hiragana": "る", "katakana": "ル" },
+    "re": { "hiragana": "れ", "katakana": "レ" },
+    "ro": { "hiragana": "ろ", "katakana": "ロ" },
+    "rya": { "hiragana": "りゃ", "katakana": "リャ" },
+    "ryu": { "hiragana": "りゅ", "katakana": "リュ" },
+    "ryo": { "hiragana": "りょ", "katakana": "リョ" },
+    "wa": { "hiragana": "わ", "katakana": "ワ" },
+    "wo": { "hiragana": "を", "katakana": "ヲ" },
+    "n": { "hiragana": "ん", "katakana": "ン" },
+};
+
+const FAILURE_RED = '#F08080';
+const SUCCESS_GREEN = '#90EE90';
+
+function moveToNextProblem() {
+    generateProblem();
+    choiceAlreadyMade = false;
+}
+
+var choiceAlreadyMade = false;
+document.addEventListener('click', function (clickedElement) {
+
+    if (!choiceAlreadyMade) {
+        delay = 0;
+
+        if (clickedElement.target.className == 'optionCard') {
+            if (clickedElement.target.innerText == solution) {
+                score++;
+                if (score > streak) {
+                    streak = score;
+                }
+                delay = 500;
+            } else {
+                score = 0;
+                clickedElement.target.style.background = FAILURE_RED;
+                delay = 2500;
+            }
+
+
+            correctOption.style.background = SUCCESS_GREEN;
+            document.getElementById("score").innerHTML = score;
+            document.getElementById("streak").innerHTML = streak;
+
+            document.getElementById("optionsWrapper").style.setProperty("pointer-events","none");
+
+            const sleep = (milliseconds) => {
+                return new Promise(resolve => setTimeout(resolve, milliseconds))
+            }
+
+            sleep(delay).then(() => {
+                document.getElementById("optionsWrapper").style.removeProperty("pointer-events");
+
+                clickedElement.target.style.background = 'white';
+                correctOption.style.background = 'white';
+
+                choiceAlreadyMade = true;
+                moveToNextProblem();
+            });
+
+        }
+    }
+})
+{% endblock %}

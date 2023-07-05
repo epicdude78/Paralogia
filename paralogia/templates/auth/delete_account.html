@@ -1,0 +1,19 @@
+{% extends 'auth/base.html' %}
+
+{% block pageTitle %}
+{% block formSubtitle %}
+Account Deletion
+{% endblock %}
+{% endblock %}
+
+{% block buttonText %}
+Delete Account
+{% endblock %}
+
+{% block afterButton %}
+This will permanently delete your account.
+{% endblock %}
+
+{% block afterBodyScript %}
+document.getElementById('name').remove();
+{% endblock %}  

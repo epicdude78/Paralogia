@@ -1,0 +1,55 @@
+{
+    "deckName": "My first words",
+    "words": {
+        "食べる": {
+            "reading": "たべる",
+            "translation": "to eat",
+            "example": "寿司を食べることが好きです"
+        },
+        "犬": {
+            "reading": "いぬ",
+            "translation": "dog",
+            "example": "犬が靴を食べちゃった"
+        },
+        "行く": {
+            "reading": "いく",
+            "translation": "to go",
+            "example": "学校へ行きます"
+        },
+        "食べ物": {
+            "reading": "たべもの",
+            "translation": "food",
+            "example": "どんな食べ物が好きですか"
+        },
+        "読む": {
+            "reading": "よむ",
+            "translation": "to read",
+            "example": "図書館では本を読むことができます"
+        },
+        "買う": {
+            "reading": "かう",
+            "translation": "to buy",
+            "example": "昨日、新しい椅子を買った。"
+        },
+        "面白い": {
+            "reading": "おもしろい",
+            "translation": "interesting",
+            "example": "この本はとても面白いです"
+        },
+        "綺麗": {
+            "reading": "きれい",
+            "translation": "pretty",
+            "example": "彼女は綺麗な絵を描いた"
+        },
+        "日本語": {
+            "reading": "にほんご",
+            "translation": "Japanese (language)",
+            "example": "日本では日本語が話されている"
+        },
+        "可愛い": {
+            "reading": "かわいい",
+            "translation": "cute",
+            "example": "私は猫が可愛いと思います"
+        }
+    }
+}

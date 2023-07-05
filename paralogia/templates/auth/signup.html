@@ -1,0 +1,17 @@
+{% extends 'auth/base.html' %}
+
+{% block pageTitle %}
+Sign up
+{% endblock %}
+
+{% block formSubtitle %}
+Who said learning languages have got to be hard?
+{% endblock %}
+
+{% block buttonText %}
+Create Your Free Account
+{% endblock %}
+
+{% block afterButton %}
+Already have an account? <a href="{{ url_for( 'auth.login' ) }}" class="ps-hero__content__link">Log in</a>
+{% endblock %}
