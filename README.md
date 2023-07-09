@@ -55,7 +55,6 @@ Trata-se de uma aplicação web que usa a biblioteca Bootstrap para construção
 - pytest
 - SudachiPy
 - Werkzeug
-- grep
 
 ## Instalação
 1. Clona o repositório com `git clone https://github.com/epicdude78/paralogia`
