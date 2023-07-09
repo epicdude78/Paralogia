@@ -44,8 +44,6 @@ sentences_cursor = con2.cursor()
 def get_example_sentences(search):
     global sentences_cursor
 
-    search_results = 'not found'
-
     mode = tokenizer.Tokenizer.SplitMode.C
     modulizer = tokenizer_obj.tokenize(search,mode)[0]
 
@@ -83,8 +81,6 @@ def get_example_sentences(search):
     sentences_cursor.execute("SELECT * FROM sentences WHERE translation LIKE '%' || ? || '%'", (search_pattern,))
     query_result = sentences_cursor.fetchall()
     results_ready_to_go = dict()
-    SENTENCE = 1
-    TRANSLATION = 2
     for result in query_result:
         sentence = result[1]
         translation = result[2]
