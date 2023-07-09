@@ -10,7 +10,7 @@ precisa para aprofundar-se no seu idioma de escolha.
 
 ## Descrição da Arquitetura
 
-Trata-se de uma aplicação web que usa a biblioteca Bootstrap para construção de sua interface, assim como Flask e MySQL para o gerenciamento do backend. 
+Trata-se de uma aplicação web que usa a biblioteca Bootstrap para construção de sua interface, assim como Flask e SQLite para o gerenciamento do backend. 
 
 ## Features
 - Dashboard
