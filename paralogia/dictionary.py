@@ -26,22 +26,23 @@ from paralogia.db import get_db
 bp = Blueprint("dictionary", __name__)
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
-DATABASE = os.path.join(PROJECT_ROOT, 'static', 'data', 'en-ja.sqlite3')
-
-SENTENCES = os.path.join(PROJECT_ROOT, 'static', 'data', 'sentences-en-ja.tsv')
+EN_JA_DICTIONARY_DATABASE = os.path.join(PROJECT_ROOT, 'static', 'data', 'en-ja.sqlite3')
+SENTENCES_DATABASE =  os.path.join(PROJECT_ROOT, 'static', 'data', 'sentences.db')
 
 
 
 tokenizer_obj = dictionary.Dictionary().create()
 jam = Jamdict()
 
-con = sqlite3.connect(DATABASE,check_same_thread=False)
-cur = con.cursor()
+con = sqlite3.connect(EN_JA_DICTIONARY_DATABASE,check_same_thread=False)
+en_ja_cursor = con.cursor()
 
-
+con2 = sqlite3.connect(SENTENCES_DATABASE,check_same_thread=False)
+sentences_cursor = con2.cursor()
 
 
 def get_example_sentences(search):
+    global sentences_cursor
 
     search_results = 'not found'
 
@@ -77,27 +78,19 @@ def get_example_sentences(search):
             search_pattern += '\|' + search_forms[i]
     
     print('pattern to look for: '+search_pattern)
-    try:
-        search_results = subprocess.check_output(('grep','-i',search_pattern,SENTENCES),shell=False)
-        search_results = search_results.decode('UTF-8')
-        search_results = search_results.split('\n')
 
-        results_ready_to_go = dict()
-        for line in search_results:
-            try:
-                line = line.split('\t')
-                SENTENCE = 3
-                TRANSLATION = 1
-                results_ready_to_go[line[SENTENCE].rstrip()] = line[TRANSLATION]
-            except IndexError as e:
-                pass
 
-        return results_ready_to_go
-        
-    except Exception as e:
-        print(e)
+    sentences_cursor.execute("SELECT * FROM sentences WHERE translation LIKE '%' || ? || '%'", (search_pattern,))
+    query_result = sentences_cursor.fetchall()
+    results_ready_to_go = dict()
+    SENTENCE = 1
+    TRANSLATION = 2
+    for result in query_result:
+        sentence = result[1]
+        translation = result[2]
+        results_ready_to_go[sentence] = translation
 
-    return False
+    return results_ready_to_go
 
 
 
@@ -105,12 +98,10 @@ def get_example_sentences(search):
 
 
 def get_translations_en_ja(search):
-    global con
-    global cur
-    #cur.execute("SELECT * FROM translation_grouped WHERE written_rep = '"+search+"'")
-    cur.execute("SELECT * FROM translation_grouped WHERE written_rep = ?", (search,))
+    global en_ja_cursor
+    en_ja_cursor.execute("SELECT * FROM translation_grouped WHERE written_rep = ?", (search,))
 
-    query_result = cur.fetchall()
+    query_result = en_ja_cursor.fetchall()
 
     search_results = dict()
 
