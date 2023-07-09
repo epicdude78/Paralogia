@@ -59,9 +59,7 @@ async function dictionarySearch(search, destinyDiv) {
             if (!containsAllAscii(search) && Object.keys(json['ja_en_results']).length > 0) {
                 
                 let amountOfExamplesFound = Object.keys(json['exampleSentences']).length;
-                if (amountOfExamplesFound > examplesLimit) {
-                    amountOfExamplesFound = examplesLimit;
-                }
+
                 const examplesHeader = document.createElement('h3');
                 const examplesHeaderText = document.createTextNode('例文 (' + amountOfExamplesFound + ' 件)');
                 examplesHeader.appendChild(examplesHeaderText);
