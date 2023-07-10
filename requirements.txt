@@ -5,3 +5,5 @@ jamdict==0.1a11.post2
 pytest==7.2.1
 SudachiPy==0.6.7
 Werkzeug==2.2.3
+SudachiDict-core==20230110
+jamdict-data==1.5
