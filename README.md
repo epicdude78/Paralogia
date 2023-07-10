@@ -44,6 +44,7 @@ Trata-se de uma aplicação web que usa a biblioteca Bootstrap para construção
 
 ## Modelo do banco de dados (momentariamente)
 
+![Screenshot](database.png)
 
 ## Requerimentos
 - Python 3
