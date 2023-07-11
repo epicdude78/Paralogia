@@ -21,15 +21,22 @@ Trata-se de uma aplicação web que usa a biblioteca Bootstrap para construção
 - Biblioteca
 - Assistente de leitura
 
-## Requisitos Funcionais
-- Usuários podem buscar por palavras no dicionário
-- Usuários podem inserir seus próprios textos para lê-los no reader mode
-- Usuários podem trocar de senha
-- Usuários podem deletar suas contas
+## Requisitos Funcionais:
 
-## Requisitos Não-Funcionais
-- A aplicação deve ser fácil de usar e intuitiva
-- A aplicação deve ter uma aparência amigável	
+- O sistema deve permitir ao usuário buscar palavras
+- O sistema deve permitir ao usuário que carregue seus próprios textos para lê-los
+- O sistema deve permitir ao usuário ler textos com ajuda de um assistente
+- O sistema deve permitir ao usuário aprender o alfabeto
+- O sistema deve permitir ao usuário memorizar vocabulário
+- O sistema deve permitir ao usuário praticar sua gramática
+- O sistema deve permitir ao usuário deletar sua conta
+- O sistema deve permitir ao usuário trocar sua senha
+
+## Requisitos Não-Funcionais:
+
+- O sistema deve ser fácil de usar e intuitivo
+- O sistema deve ter uma aparência agradável
+- Ao serem pesquisadas as palavras devem ter um limite N de frases exemplo, de modo a não congestionar o navegador do usuário
 
 ## Histórias de Usuário
 - Como usuário, quero poder aprender o alfabeto​
