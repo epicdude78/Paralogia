@@ -14,7 +14,7 @@ def test_register(client, app):
     # test that viewing the page renders without template errors
     assert client.get("/auth/signup").status_code == 200
 
-    response = client.post("/auth/signup", data={"username": "aaaa", "password": "aaaabbbb2"})
+    client.post("/auth/signup", data={"username": "aaaa", "password": "aaaabbbb2"})
 
     # test that the user was inserted into the database
     with app.app_context():
