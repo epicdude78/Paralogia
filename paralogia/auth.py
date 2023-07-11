@@ -73,6 +73,11 @@ def signup():
         if not re.match(r"^[A-Za-z0-9]{4,}$",username):
             error = "Usernames must have at least 4 characters and no symbols."
 
+        if not username:
+            error = "Username is required."
+        elif not password:
+            error = "Password is required."
+
         if error is None:
             try:
                 db.execute(
