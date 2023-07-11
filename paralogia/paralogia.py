@@ -19,7 +19,6 @@ import json
 
 
 
-
 bp = Blueprint("paralogia", __name__)
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -47,6 +46,9 @@ def index():
 def user_settings():
     return render_template("paralogia/user_settings.html",username=g.user['username'])
 
+@bp.route("/hello")
+def hello():
+    return 'Hello, World!'
 
 
 @bp.route('/reader')
