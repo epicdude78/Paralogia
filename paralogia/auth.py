@@ -44,6 +44,26 @@ def load_logged_in_user():
         )
 
 
+def validate_signup(username,password):
+    error = None
+
+    if len(username) > 16:
+        error = "Your username is too big, try to keep it under 16 characters."
+
+    if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", password):
+        error = "Passwords must have at least eight characters and contain a number."
+
+    if not re.match(r"^[A-Za-z0-9]{4,}$",username):
+        error = "Usernames must have at least 4 characters and no symbols."
+
+    if not username:
+        error = "Username is required."
+    elif not password:
+        error = "Password is required."
+
+    return error
+
+
 @bp.route("/signup", methods=("GET", "POST"))
 def signup():
     """Register a new user.
@@ -61,22 +81,7 @@ def signup():
         print(password)
         
         db = get_db()
-        error = None
-
-        if len(username) > 16:
-            error = "Your username is too big, try to keep it under 16 characters."
-
-        # Minimum eight characters, at least one letter and one number
-        if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", password):
-            error = "Passwords must have at least eight characters and contain a number."
-
-        if not re.match(r"^[A-Za-z0-9]{4,}$",username):
-            error = "Usernames must have at least 4 characters and no symbols."
-
-        if not username:
-            error = "Username is required."
-        elif not password:
-            error = "Password is required."
+        error = validate_signup(username,password)
 
         if error is None:
             try:
