@@ -19,6 +19,7 @@ import json
 
 
 
+
 bp = Blueprint("paralogia", __name__)
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
