@@ -69,22 +69,16 @@ def get_example_sentences(search):
         search_forms.append(stemma)
 
 
-    for i in range(len(search_forms)):
-        if i == 0:
-            search_pattern = search_forms[i]
-        else:
-            search_pattern += '\|' + search_forms[i]
-    
-    print('pattern to look for: '+search_pattern)
 
 
-    sentences_cursor.execute("SELECT * FROM sentences WHERE translation LIKE '%' || ? || '%'", (search_pattern,))
-    query_result = sentences_cursor.fetchall()
     results_ready_to_go = dict()
-    for result in query_result:
-        sentence = result[1]
-        translation = result[2]
-        results_ready_to_go[sentence] = translation
+    for i in range(len(search_forms)):
+        sentences_cursor.execute("SELECT * FROM sentences WHERE translation LIKE '%' || ? || '%'", (search_forms[i],))
+        query_result = sentences_cursor.fetchall()
+        for result in query_result:
+            sentence = result[1]
+            translation = result[2]
+            results_ready_to_go[sentence] = translation
 
     return results_ready_to_go
 
