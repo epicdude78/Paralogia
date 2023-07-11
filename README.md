@@ -24,7 +24,7 @@ Trata-se de uma aplicação web que usa a biblioteca Bootstrap para construção
 ## Requisitos Funcionais:
 
 - O sistema deve permitir ao usuário buscar palavras
-- O sistema deve permitir ao usuário que carregue seus próprios textos para lê-los
+- O sistema deve permitir ao usuário que carregue seus próprios textos para leitura
 - O sistema deve permitir ao usuário ler textos com ajuda de um assistente
 - O sistema deve permitir ao usuário aprender o alfabeto
 - O sistema deve permitir ao usuário memorizar vocabulário
